@@ -1,19 +1,16 @@
 package main
 
 import (
-	"log"
 	"os"
 
-	"github.com/stellayazilim/neptune_cms/config"
 	"github.com/stellayazilim/neptune_cms/internal/rest"
+	"github.com/stellayazilim/neptune_cms/pkg/utils/config"
 )
 
 func main() {
 
 	// load env
-	if err := config.InjectEnv(); err != nil {
-		log.Fatal(err)
-	}
+	config.InjectEnv()
 
 	// init rest app
 	r := rest.Rest()
