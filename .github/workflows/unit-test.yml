@@ -17,5 +17,6 @@ jobs:
               uses: actions/setup-go@v4
               with:
                 go-version: ${{ matrix.go-version }}
+                ref: ${{ github.event.workflow_run.head_branch }}
             - name: Display Go version
               run: go version
