@@ -23,7 +23,7 @@ build/
 # vendor/
 
 env/.env
-
+!env/.env.test
 
 # Go workspace file
 go.work
