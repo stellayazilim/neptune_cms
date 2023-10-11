@@ -24,6 +24,6 @@ build/
 
 env/.env
 !env/.env.test
-
+!env/.env.example
 # Go workspace file
 go.work
