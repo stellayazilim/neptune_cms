@@ -1,11 +1,7 @@
 name: tests
-on: 
-    workflow_run:
-        workflows: ["migrations"]
-        types:
-            - completed
+on: push
 jobs:
-    unit-tests:
+    unit_tests:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
