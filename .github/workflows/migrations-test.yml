@@ -26,10 +26,6 @@ jobs:
     migration_test:
         runs-on: ubuntu-latest
         
-        strategy:
-          matrix:
-            go-version: ['1.20', '1.21']
-            
         services:
             postgres:
                 image: postgres
@@ -41,10 +37,9 @@ jobs:
                     - 5432:5432
         steps:
           - uses: actions/checkout@v4
-          - name: Setup Go ${{ matrix.go-version }}
-            uses: actions/setup-go@v4
+          - uses: actions/setup-go@v4
             with:
-              go-version: ${{ matrix.go-version }}
+              go-version: '1.21'
           # You can test your matrix by printing the current Go version
           - name: Display Go version
             run: go version
