@@ -48,4 +48,11 @@ jobs:
           # You can test your matrix by printing the current Go version
           - name: Display Go version
             run: go version
+          - name: install goose
+            run: go install github.com/pressly/goose/v3/cmd/goose@latest
+          - name: Migrate latest version
+            run: make up
+          - name: Rollback first version
+            run: make reset
+
          
