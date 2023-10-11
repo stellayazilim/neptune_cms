@@ -8,5 +8,7 @@ jobs:
             - uses: actions/setup-go@v4
               with:
                 go-version: '1.21'
+            - name: Install deps
+              run: go mod vendor
             - name: Run unit tests
               run: make test_unit
