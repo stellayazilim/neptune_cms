@@ -1,7 +1,8 @@
 name: tests
 on:
     workflow_run:
-        workflows: ["migration_test"]
+        workflows:
+            - migrations
         types:
             - completed
 jobs:
