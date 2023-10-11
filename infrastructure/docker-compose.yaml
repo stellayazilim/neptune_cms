@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+    postgres:
+        image: postgres
+        restart: always
+        environment:
+          POSTGRES_PASSWORD: neptune
+          POSTGRES_USER: neptune
+          POSTGRES_DB: neptune
+        ports:
+          - "5432:5432"
