@@ -26,15 +26,17 @@ jobs:
               --health-retries 5
     migration_test:
         runs-on: ubuntu-latest
+        strategy:
+            matrix:
+              go-version: [ '1.19', '1.20', '1.21.x' ]
         steps:
-            - uses: actions/checkout@v3
-            - uses: actions/setup-go@v4
+            - uses: actions/checkout@v4
+            - name: Setup Go ${{ matrix.go-version }}
+              uses: actions/setup-go@v4
               with:
-                go-version: '1.21'
-             
+                go-version: ${{ matrix.go-version }}
+            # You can test your matrix by printing the current Go version
+            - name: Display Go version
+              run: go version
             - name: install goose
               run: go install github.com/pressly/goose/v3/cmd/goose@latest
-            - name: migrate to latest version
-              run: make up
-            - name: rollback to first version
-              run: make reset
