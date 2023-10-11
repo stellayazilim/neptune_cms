@@ -25,6 +25,7 @@ jobs:
               --health-retries 5
     migration_test:
         runs-on: ubuntu-latest
+        
         strategy:
           matrix:
             go-version: [ '1.19', '1.20', '1.21.x' ]
@@ -38,9 +39,4 @@ jobs:
           # You can test your matrix by printing the current Go version
           - name: Display Go version
             run: go version
-          - name: install goose
-            run: go install github.com/pressly/goose/v3/cmd/goose@latest
-          - name: migrate db to latest version
-            run: make up
-          - name: migrate db to first version
-            run: make reset
+         
