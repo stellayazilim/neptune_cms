@@ -1,35 +1,10 @@
 name: migrations
 on: push
 jobs:
-    # container-job:
-    #     # Containers must run in Linux based operating systems
-    #     runs-on: ubuntu-latest
-    #     # Docker Hub image that `container-job` executes in
-    #     container: node:10.18-jessie
-    #     # Service containers to run with `container-job`
-    #     services:
-    #       # Label used to access the service container
-    #       postgres:
-    #         # Docker Hub image
-    #         image: postgres
-    #         # Provide the password for postgres
-    #         env:
-    #           POSTGRES_USER: neptune
-    #           POSTGRES_PASSWORD: neptune
-    #           POSTGRES_DB: neptune
-    #         # Set health checks to wait until postgres has started
-    #         options: >-
-    #           --health-cmd pg_isready
-    #           --health-interval 10s
-    #           --health-timeout 5s
-    #           --health-retries 5
+
     migration_test:
         runs-on: ubuntu-latest
         
-        strategy:
-          matrix:
-            go-version: ['1.20', '1.21']
-            
         services:
             postgres:
                 image: postgres
@@ -41,10 +16,9 @@ jobs:
                     - 5432:5432
         steps:
           - uses: actions/checkout@v4
-          - name: Setup Go ${{ matrix.go-version }}
-            uses: actions/setup-go@v4
+          - uses: actions/setup-go@v4
             with:
-              go-version: ${{ matrix.go-version }}
+              go-version: '1.21'
           # You can test your matrix by printing the current Go version
           - name: Display Go version
             run: go version

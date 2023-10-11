@@ -9,7 +9,8 @@
 *.dylib
 
 # temporary files
-/tmp
+tmp/
+build/
 
 
 # Test binary, built with `go test -c`
@@ -22,7 +23,7 @@
 # vendor/
 
 env/.env
-
-
+!env/.env.test
+!env/.env.example
 # Go workspace file
 go.work
