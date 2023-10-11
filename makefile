@@ -81,3 +81,5 @@ validate:
 	bash -c "goose -dir=$(MIGRATION_DIR) validate"
 test_db:
 	bash -c "make spinup || make up && make down"
+test_unit:
+	bash -c "export GO_ENV="test" && go test ./... -v"
