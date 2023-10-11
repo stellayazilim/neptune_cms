@@ -35,8 +35,7 @@ jobs:
               uses: actions/setup-go@v4
               with:
                 go-version: ${{ matrix.go-version }}
-            # You can test your matrix by printing the current Go version
-            - name: Display Go version
-              run: go version
+                name: Display Go version
+                run: go version
             - name: install goose
               run: go install github.com/pressly/goose/v3/cmd/goose@latest
