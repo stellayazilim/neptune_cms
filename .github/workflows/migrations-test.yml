@@ -1,7 +1,6 @@
 name: migrations
 on: push
 jobs:
-
     migration_test:
         runs-on: ubuntu-latest
         

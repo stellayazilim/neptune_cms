@@ -1,22 +1,28 @@
-package main_test
+package main
 
 import (
 	"os"
 	"testing"
 
-	"github.com/stellayazilim/neptune_cms/pkg/utils/config"
+	"github.com/stellayazilim/neptune_cms/internal/rest"
+	"github.com/stellayazilim/neptune_cms/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMain(t *testing.T) {
 
-	t.Run("it should inject env variables without error", func(t *testing.T) {
+	t.Run("Should inject .env files", func(t *testing.T) {
+		// load env
+		utils.InjectEnv()
 
-		err := config.InjectEnv()
+		assert.Equal(t, os.Getenv("POSTGRES_DB"), "neptune")
+	})
 
-		assert.Nil(t, err)
-
-		assert.Equal(t, "neptune", os.Getenv("POSTGRES_DB"))
+	t.Run("Should create new Rest app", func(t *testing.T) {
+		r := rest.Rest()
+		assert.NotNil(t, r)
+		assert.Implements(t, ((*rest.IRest)(nil)), r.(rest.IRest))
 
 	})
+
 }
