@@ -90,5 +90,5 @@ test_unit:
 # ==========================================================
 # run code coverage tests
 test_cov:
-	bash -c "export GO_ENV="test" && go test -v -coverprofile coverage/cover.out ./..."
+	bash -c "export GO_ENV="test" && go test -v -coverprofile coverage/cover.out ./internal/... ./pkg/..."
 	bash -c "export GO_ENV="test" && go tool cover -html coverage/cover.out -o coverage/cover.html"
