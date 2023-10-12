@@ -11,7 +11,7 @@
 # temporary files
 tmp/
 build/
-
+coverage/
 
 # Test binary, built with `go test -c`
 *.test
