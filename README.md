@@ -25,12 +25,19 @@ List any software, dependencies, or tools that users need to install or configur
 ### Usage
 
 
-1. Clone the repository:
+#### 1. Clone the repository:
+
+ssh
 ```shell
-git clone https://github.com/your-username/your-repo.git
-cd your-repo
+git clone git@github.com:stellayazilim/neptune_cms.git
+cd neptun_cms
 ```
-2. Set up your database environment by modifying the following fields in the Makefile:
+http
+```shell
+git clone https://github.com/stellayazilim/neptune_cms.git
+cd neptun_cms
+```
+#### 2. Set up your database environment by modifying the following fields in the Makefile:
 
 * `POSTGRES_USER`
 * `POSTGRES_PASSWORD`
@@ -40,18 +47,18 @@ cd your-repo
 
 
 
-3. Start enviroment
+#### 3. Start enviroment
 
 ```shell
 make spinup
 ```
 
-4. Run the migrations to set up your database:
+#### 4. Run the migrations to set up your database:
 ```shell
 make up
 ```
 
-5. Start the application in development mode with hot reload:
+#### 5. Start the application in development mode with hot reload:
 ```shell
 make dev
 ```
