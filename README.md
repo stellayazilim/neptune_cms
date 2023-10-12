@@ -13,7 +13,6 @@ A content management system on premise
 - [License](#license)
 
 ## Getting Started
-Explain how to get your project up and running. Include any necessary installation instructions, environment setup, and configuration.
 
 ### Prerequisites
 List any software, dependencies, or tools that users need to install or configure before using your project. Make sure to specify versions if necessary.
@@ -24,7 +23,7 @@ List any software, dependencies, or tools that users need to install or configur
 - Other dependencies...
 
 ### Usage
-Provide a step-by-step guide on how to use your project. Include usage examples, configuration files, or any additional information that might be helpful for users.
+
 
 1. Clone the repository:
 ```shell
