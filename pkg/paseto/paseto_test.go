@@ -73,17 +73,17 @@ func (s *TSPaseto) TestCreatePasetoTokenFromPayload() {
 	key := utils.GenNCharString(32)
 
 	s.Run("Should create token", func() {
-		token, _ := payload.CreatePasetoTokemByPayload([]byte(key))
+		token, _ := payload.CreatePasetoTokenByPayload([]byte(key))
 		s.Assertions.NotNil(token)
 	})
 
 	s.Run("Token must be prefixed `v2.local.`", func() {
-		token, _ := payload.CreatePasetoTokemByPayload([]byte(key))
+		token, _ := payload.CreatePasetoTokenByPayload([]byte(key))
 		s.Assertions.True(strings.HasPrefix(token, "v2.local."))
 	})
 
 	s.Run("Token must be decrypted to payload", func() {
-		token, _ := payload.CreatePasetoTokemByPayload([]byte(key))
+		token, _ := payload.CreatePasetoTokenByPayload([]byte(key))
 		decrypted := new(PasetoPayload)
 		err := paseto.NewV2().Decrypt(token, []byte(key), decrypted, nil)
 
@@ -93,7 +93,7 @@ func (s *TSPaseto) TestCreatePasetoTokenFromPayload() {
 
 	s.Run("Must not throw error", func() {
 
-		_, err := payload.CreatePasetoTokemByPayload([]byte(key))
+		_, err := payload.CreatePasetoTokenByPayload([]byte(key))
 
 		s.Assertions.Nil(err)
 	})
@@ -101,7 +101,7 @@ func (s *TSPaseto) TestCreatePasetoTokenFromPayload() {
 	s.Run("Must return error on key less then 32 char", func() {
 
 		skey := utils.GenNCharString(12)
-		_, err := payload.CreatePasetoTokemByPayload([]byte(skey))
+		_, err := payload.CreatePasetoTokenByPayload([]byte(skey))
 
 		s.Assertions.NotNil(err)
 	})

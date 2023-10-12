@@ -38,7 +38,7 @@ func CreatePasetoPayload(p *models.Account, duration time.Duration) *PasetoPaylo
 	}
 }
 
-func (p *PasetoPayload) CreatePasetoTokemByPayload(key []byte) (string, error) {
+func (p *PasetoPayload) CreatePasetoTokenByPayload(key []byte) (string, error) {
 
 	return paseto.NewV2().Encrypt(key, p, nil)
 }
