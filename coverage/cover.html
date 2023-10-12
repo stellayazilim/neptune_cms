@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>cmd: Go Coverage Report</title>
+		<title>paseto: Go Coverage Report</title>
 		<style>
 			body {
 				background: black;
@@ -55,9 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/stellayazilim/neptune_cms/cmd/main.go (0.0%)</option>
-				
-				<option value="file1">github.com/stellayazilim/neptune_cms/pkg/paseto/paseto.go (100.0%)</option>
+				<option value="file0">github.com/stellayazilim/neptune_cms/pkg/paseto/paseto.go (100.0%)</option>
 				
 				</select>
 			</div>
@@ -71,30 +69,7 @@
 		</div>
 		<div id="content">
 		
-		<pre class="file" id="file0" style="display: none">package main
-
-import (
-        "os"
-
-        "github.com/stellayazilim/neptune_cms/internal/rest"
-        "github.com/stellayazilim/neptune_cms/pkg/utils"
-)
-
-func main() <span class="cov0" title="0">{
-
-        // load env
-        utils.InjectEnv()
-
-        // init rest app
-        r := rest.Rest()
-
-        // start listen port
-        r.Run(os.Getenv("NEPTUNE_REST_ADDR"))
-
-}</span>
-</pre>
-		
-		<pre class="file" id="file1" style="display: none">package paseto
+		<pre class="file" id="file0" style="display: none">package paseto
 
 import (
         "errors"
@@ -134,7 +109,7 @@ func CreatePasetoPayload(p *models.Account, duration time.Duration) *PasetoPaylo
         }
 }</span>
 
-func (p *PasetoPayload) CreatePasetoTokemByPayload(key []byte) (string, error) <span class="cov8" title="1">{
+func (p *PasetoPayload) CreatePasetoTokenByPayload(key []byte) (string, error) <span class="cov8" title="1">{
 
         return paseto.NewV2().Encrypt(key, p, nil)
 }</span>
