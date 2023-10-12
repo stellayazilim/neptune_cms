@@ -6,19 +6,24 @@ import (
 
 type IRest interface {
 	Run(string) error
+	Stop() error
 }
 
 type rest struct {
-	router *fiber.App
+	App *fiber.App
 }
 
 func Rest() IRest {
 	return &rest{
-		router: fiber.New(),
+		App: fiber.New(),
 	}
 }
 
 // start rest application and listen given addr
 func (r *rest) Run(addr string) error {
-	return r.router.Listen(addr)
+	return r.App.Listen(addr)
+}
+
+func (r *rest) Stop() error {
+	return r.App.Shutdown()
 }

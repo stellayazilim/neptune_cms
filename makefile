@@ -79,7 +79,16 @@ fix:
 # Check migration files without running them
 validate:
 	bash -c "goose -dir=$(MIGRATION_DIR) validate"
+# ==========================================================
+# tests migrations on database
 test_db:
 	bash -c "make spinup || make up && make down"
+# ==========================================================
+# run unit tests
 test_unit:
 	bash -c "export GO_ENV="test" && go test ./..."
+# ==========================================================
+# run code coverage tests
+test_cov:
+	bash -c "export GO_ENV="test" && go test -v -coverprofile coverage/cover.out ./..."
+	bash -c "export GO_ENV="test" && go tool cover -html coverage/cover.out -o coverage/cover.html"
