@@ -7,6 +7,7 @@ import (
 	"github.com/stellayazilim/neptune_cms/mocks"
 	"github.com/stellayazilim/neptune_cms/pkg/models"
 	"github.com/stellayazilim/neptune_cms/pkg/neptune/auth"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -19,40 +20,52 @@ func TestAuth(t *testing.T) {
 }
 
 func (t *TSAuthService) TestSignup() {
-	mockAccountRepo := mocks.MockAccountRepository{}
-	authService := auth.AuthService(&mockAccountRepo)
+	mockAccountRepo := new(mocks.MockAccountRepository)
+	mockAuthHelper := new(mocks.MockAuthHelper)
+	authService := auth.AuthService(mockAccountRepo, mockAuthHelper)
 
-	t.Run("should create account", func() {
+	t.Run("should signup", func() {
 
 		adto := &auth.SignupDto{
 			Email:    "jhon@doe.com",
 			Password: "1234",
 		}
 
-		am := &models.Account{
+		ac := &models.Account{
 			Email:    adto.Email,
-			Password: adto.HashPassword(),
+			Password: []byte("$2a$10$NDCBnYIfoCPk/n6HJKJLFexxQPdOS528F62iwznU2nkFiiPS3siBq"),
 		}
-		mockAccountRepo.On("CreateAccount", am).Return(nil)
-		err := authService.Signup(adto)
 
+		mockAuthHelper.On("HashPassword", adto).Return([]byte("$2a$10$NDCBnYIfoCPk/n6HJKJLFexxQPdOS528F62iwznU2nkFiiPS3siBq"))
+
+		mockAccountRepo.On("CreateAccount", ac).Return(nil)
+		err := authService.Signup(adto)
 		t.Nil(err)
 	})
 
-	t.Run("should get account by email", func() {
-		var err error
-		var token string
+	t.Run("should signin by email", func() {
+		// var err error
+		// var token string
+
 		adto := &auth.SigninDto{
 			Email:    "jhon@doe.com",
 			Password: "1234",
 		}
 
-		mockAccountRepo.On("GetAccountByEmail", &models.Account{
+		var ac *models.Account = &models.Account{
 			Email: adto.Email,
-		}).Return(nil)
+		}
+		mockAccountRepo.On("GetAccountByEmail", ac).
+			Return(nil).
+			Run(func(args mock.Arguments) {
+				arg := args.Get(0).(*models.Account)
+				arg.Password = []byte("$2a$10$NDCBnYIfoCPk/n6HJKJLFexxQPdOS528F62iwznU2nkFiiPS3siBq")
 
-		t.Nil(err)
-		token, err = authService.Signin(adto)
+			})
+
+		mockAuthHelper.On("ComparePassword", ac, adto).Return(true)
+		// t.Nil(err)
+		token, err := authService.Signin(adto)
 
 		t.Nil(err)
 		t.Equal(token, "")
