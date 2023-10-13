@@ -92,3 +92,10 @@ test_unit:
 test_cov:
 	bash -c "export GO_ENV="test" && go test -v -coverprofile coverage/cover.out ./internal/... ./pkg/..."
 	bash -c "export GO_ENV="test" && go tool cover -html coverage/cover.out -o coverage/cover.html"
+	# ==========================================================
+# Seeds database with data
+seed:
+	bash -c "bash seeds/account.sh POSTGRES_USER=$(POSTGRES_USER) POSTGRES_PASSWORD=$(POSTGRES_PASSWORD) \
+                POSTGRES_HOST=$(POSTGRES_HOST) \
+                POSTGRES_PORT=$(POSTGRES_PORT) \
+                POSTGRES_DB=$(POSTGRES_DB)"
