@@ -7,7 +7,7 @@ import (
 
 type IAuthService interface {
 	Signup(dto *SignupDto) error
-	Signin(dto *SigninDto) (string, error)
+	Signin(dto *SigninDto) ([2]string, error)
 }
 
 type authServiceRepositories struct {
@@ -37,15 +37,19 @@ func (s *authService) Signup(dto *SignupDto) error {
 	})
 }
 
-func (s *authService) Signin(dto *SigninDto) (string, error) {
+func (s *authService) Signin(dto *SigninDto) ([2]string, error) {
+
+	var tokens [2]string
 	acc := &models.Account{
 		Email: dto.Email,
 	}
-	err := s.repositories.account.GetAccountByEmail(acc)
-
-	if s.helpers.ComparePassword(acc, dto) {
-		return "", err
+	if err := s.repositories.account.GetAccountByEmail(acc); err != nil {
+		return tokens, err
 	}
 
-	return "", PasswordDoesNotMatchError
+	if s.helpers.ComparePassword(acc, dto) {
+		return tokens, nil
+	}
+
+	return tokens, PasswordDoesNotMatchError
 }
