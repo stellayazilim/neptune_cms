@@ -20,12 +20,11 @@ func TestAuth(t *testing.T) {
 }
 
 func (t *TSAuthService) TestSignup() {
-	mockAccountRepo := new(mocks.MockAccountRepository)
-	mockAuthHelper := new(mocks.MockAuthHelper)
-	authService := auth.AuthService(mockAccountRepo, mockAuthHelper)
 
 	t.Run("should signup", func() {
-
+		mockAccountRepo := new(mocks.MockAccountRepository)
+		mockAuthHelper := new(mocks.MockAuthHelper)
+		authService := auth.AuthService(mockAccountRepo, mockAuthHelper)
 		adto := &auth.SignupDto{
 			Email:    "jhon@doe.com",
 			Password: "1234",
@@ -44,7 +43,10 @@ func (t *TSAuthService) TestSignup() {
 	})
 
 	t.Run("should signin by email", func() {
-		// var err error
+		mockAccountRepo := new(mocks.MockAccountRepository)
+		mockAuthHelper := new(mocks.MockAuthHelper)
+		authService := auth.AuthService(mockAccountRepo, mockAuthHelper)
+		var err error
 		// var token string
 
 		adto := &auth.SigninDto{
@@ -52,18 +54,17 @@ func (t *TSAuthService) TestSignup() {
 			Password: "1234",
 		}
 
-		var ac *models.Account = &models.Account{
+		mockAccountRepo.On("GetAccountByEmail", &models.Account{
 			Email: adto.Email,
-		}
-		mockAccountRepo.On("GetAccountByEmail", ac).
+		}).
 			Return(nil).
 			Run(func(args mock.Arguments) {
 				arg := args.Get(0).(*models.Account)
-				arg.Password = []byte("$2a$10$NDCBnYIfoCPk/n6HJKJLFexxQPdOS528F62iwznU2nkFiiPS3siBq")
+				arg.Password = []byte("$2a$10$89Uf6Q4Tm6KLaCG8LpuOne8kIsVpA7Zx2FvY9Ak8iR5ykxOwUpU0W")
 
+				mockAuthHelper.On("ComparePassword", arg, adto).Return(true)
 			})
 
-		mockAuthHelper.On("ComparePassword", ac, adto).Return(true)
 		// t.Nil(err)
 		token, err := authService.Signin(adto)
 
