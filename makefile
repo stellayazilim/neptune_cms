@@ -30,7 +30,7 @@ spindown:
 # ==========================================================
 # start app on dev mode with hot reload
 dev:
-	bash -c "air -c .air.toml"
+	bash -c "air -c .air.toml.dev"
 	# ==========================================================
 # create new migration file
 create:
@@ -81,18 +81,22 @@ validate:
 	bash -c "goose -dir=$(MIGRATION_DIR) validate"
 # ==========================================================
 # tests migrations on database
-test_db:
+test\:db:
 	bash -c "make spinup || make up && make down"
 # ==========================================================
 # run unit tests
-test_unit:
+test\:unit:
 	bash -c "export GO_ENV="test" && go test ./..."
 # ==========================================================
+# run unit tests watch mode
+test\:unit\:watch: 
+	bash -c "air -c .air.toml.test"
+# ==========================================================
 # run code coverage tests
-test_cov:
+test\:cov:
 	bash -c "export GO_ENV="test" && go test -v -coverprofile coverage/cover.out ./internal/... ./pkg/..."
 	bash -c "export GO_ENV="test" && go tool cover -html coverage/cover.out -o coverage/cover.html"
-	# ==========================================================
+# ==========================================================
 # Seeds database with data
 seed:
 	bash -c "bash seeds/account.sh POSTGRES_USER=$(POSTGRES_USER) POSTGRES_PASSWORD=$(POSTGRES_PASSWORD) \

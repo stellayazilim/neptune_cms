@@ -42,7 +42,7 @@ func (t *TSAuthService) TestSignup() {
 		t.Nil(err)
 	})
 
-	t.Run("should signin by email", func() {
+	t.Run("it should signin by email and password", func() {
 		mockAccountRepo := new(mocks.MockAccountRepository)
 		mockAuthHelper := new(mocks.MockAuthHelper)
 		authService := auth.AuthService(mockAccountRepo, mockAuthHelper)
@@ -61,7 +61,6 @@ func (t *TSAuthService) TestSignup() {
 			Run(func(args mock.Arguments) {
 				arg := args.Get(0).(*models.Account)
 				arg.Password = []byte("$2a$10$89Uf6Q4Tm6KLaCG8LpuOne8kIsVpA7Zx2FvY9Ak8iR5ykxOwUpU0W")
-
 				mockAuthHelper.On("ComparePassword", arg, adto).Return(true)
 			})
 
@@ -69,7 +68,7 @@ func (t *TSAuthService) TestSignup() {
 		token, err := authService.Signin(adto)
 
 		t.Nil(err)
-		t.Equal(token, "")
+		t.Equal(token, [2]string{"", ""})
 
 	})
 }

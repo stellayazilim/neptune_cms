@@ -11,4 +11,4 @@ jobs:
             - name: Install deps
               run: go mod vendor
             - name: Run unit tests
-              run: make test_unit
+              run: make test:unit
