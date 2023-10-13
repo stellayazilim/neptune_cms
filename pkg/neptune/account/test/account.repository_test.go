@@ -40,9 +40,8 @@ func (t *TSAccountRepository) TestAccountRepository() {
 		}
 
 		acc := &models.Account{
-			Email:    dto.Email,
-			Password: []byte(dto.Password),
-			ID:       uuid.NewString(),
+			Email: dto.Email,
+			ID:    uuid.NewString(),
 		}
 
 		accountMockRow := sqlmock.
