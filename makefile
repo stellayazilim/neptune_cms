@@ -29,7 +29,7 @@ spindown:
 	bash -c "sudo docker compose --project-directory=infrastructure down"
 # ==========================================================
 # start app on dev mode with hot reload
-dev:
+start\:dev:
 	bash -c "air -c .air.toml.dev"
 	# ==========================================================
 # create new migration file

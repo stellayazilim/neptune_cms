@@ -69,7 +69,7 @@ Each of the Makefile commands available in project.
 
 * `spinup`: Spin up the database and other services using Docker Compose.
 * `spindown`: Spin down (stop and remove) the Docker containers.
-* `dev`: Start the application in development mode with hot reload.
+* `start:dev`: Start the application in development mode with hot reload.
 * `create`: Create a new migration file.
 * `up`: Migrate the database to the most recent version.
 * `up-by-one`: Migrate the database up by one version.
@@ -82,29 +82,35 @@ Each of the Makefile commands available in project.
 * `version`: Display the current version of the database.
 * `fix`: Apply sequential ordering to migrations.
 * `validate`: Check migration files without running them.
-* `test_db`: Run tests on the database.
-* `test_unit`: Run unit tests.
-* `test_cov`: Run code coverage tests.
+* `test:db`: Run tests on the database.
+* `test:unit`: Run unit tests.
+* `test:unit:watch` : Run init tests on watch mode.
+* `test:cov`: Run code coverage tests.
+
 
 
 ## Testing
 
 #### 1. To run unit tests:
 ```shell
-make test_unit
+make test:unit
 ```
 
+#### 1. To run unit tests watch mode:
+```shell
+make test:unit:watch
+```
 
 #### 2. To run code coverage tests and generate a coverage report:
 ```shell
-make test_cov
+make test:cov
 ```
 
 #### 3. To test database migrations, you can use:
 
 note: you need a fresh database instance
 ```shell
-make test_db
+make test:db
 ```
 ## Contributing
 Any helps are appreciated, feel free to fork this repository
