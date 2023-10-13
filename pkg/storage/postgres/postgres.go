@@ -6,13 +6,15 @@ import (
 	"os"
 
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
-type postgres struct {
+type Postgres struct {
 	DB *sqlx.DB
 }
 
-func Postgres() *postgres {
+func NewPostgres() *Postgres {
+
 	connString := fmt.Sprintf("user=%s dbname=%s password=%s host=%s port=%s sslmode=disable",
 		os.Getenv("POSTGRES_USER"),
 		os.Getenv("POSTGRES_DB"),
@@ -20,14 +22,13 @@ func Postgres() *postgres {
 		os.Getenv("POSTGRES_HOST"),
 		os.Getenv("POSTGRES_PORT"),
 	)
-
 	conn, err := sqlx.Connect("postgres", connString)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return &postgres{
+	return &Postgres{
 		DB: conn,
 	}
 }

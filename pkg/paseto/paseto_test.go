@@ -4,24 +4,19 @@ import (
 	"strings"
 	"testing"
 	"time"
-
 	"github.com/google/uuid"
 	"github.com/o1egl/paseto"
 	"github.com/stellayazilim/neptune_cms/pkg/models"
 	"github.com/stellayazilim/neptune_cms/pkg/utils"
 	"github.com/stretchr/testify/suite"
 )
-
 type TSPaseto struct {
 	suite.Suite
 }
-
 func TestTSPaseto(t *testing.T) {
 	suite.Run(t, new(TSPaseto))
 }
-
 func (s *TSPaseto) TestCreatePasetoPayload() {
-
 	acc := &models.Account{
 		Email:    "jhon@doe.com",
 		Password: []byte("1234"),
@@ -33,32 +28,18 @@ func (s *TSPaseto) TestCreatePasetoPayload() {
 
 		s.Assertions.NotNil(payload)
 	})
-	s.Run("payload must have Audience as Account", func() {
+	s.Run("payload must have valid attiributes", func() {
 
 		s.Assertions.Equal(payload.Audience, "Account")
-	})
-	s.Run("payload must have Issuer as Stella", func() {
-
 		s.Assertions.Equal(payload.Issuer, "Stella")
 		s.Assertions.LessOrEqual(payload.IssuedAt, time.Now())
 		s.Assertions.LessOrEqual(payload.NotBefore, time.Now())
-	})
-
-	s.Run("payload must have IssuedAt and NotBefore fields and exact same values", func() {
-
-		s.Assertions.LessOrEqual(payload.IssuedAt, time.Now())
-		s.Assertions.LessOrEqual(payload.NotBefore, time.Now())
 		s.Assertions.Equal(payload.IssuedAt, payload.NotBefore)
+		s.Assertions.IsType(uuid.UUID{}, payload.Jti)
 	})
-
 	s.Run("Payload subject must match account email", func() {
 
 		s.Assertions.Equal(payload.Subject, acc.Email)
-	})
-
-	s.Run("Payload must contain Jti as type of uuid", func() {
-
-		s.Assertions.IsType(uuid.UUID{}, payload.Jti)
 	})
 
 }
