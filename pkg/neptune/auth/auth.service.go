@@ -55,6 +55,7 @@ func (s *authService) Signin(dto *SigninDto) ([2]string, error) {
 	}
 	if s.helpers.ComparePassword(acc, dto) {
 		tokens[0] = s.helpers.CreateToken([]byte(os.Getenv("PASETO_ACCESS_SYMMETRIC_KEY")), acc, time.Minute*20)
+
 		return tokens, nil
 	}
 
