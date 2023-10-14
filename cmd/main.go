@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"os"
 
-	"github.com/stellayazilim/neptune_cms/pkg/models"
+	"github.com/stellayazilim/neptune_cms/internal/rest"
 	"github.com/stellayazilim/neptune_cms/pkg/neptune/account"
+	"github.com/stellayazilim/neptune_cms/pkg/neptune/auth"
 	"github.com/stellayazilim/neptune_cms/pkg/storage/postgres"
 	"github.com/stellayazilim/neptune_cms/pkg/utils"
 )
@@ -13,27 +14,28 @@ import (
 func main() {
 
 	// load env
-	utils.InjectEnv()
+	utils.InjectEnv(utils.GetRootDir() + "/env/.env")
 
-	// init rest app
-	// r := rest.Rest()
-
-	// // start listen port
-	// r.Run(os.Getenv("NEPTUNE_REST_ADDR"))
-
-	ac := &models.Account{
-		Email: "jhon@doe.com",
-	}
+	// connect postgres
 	pg := postgres.NewPostgres()
 
-	ar := account.AccountRepository(pg)
+	//*** account module ****//
+	//***				 ****//
+	// account repository
+	accountRepository := account.AccountRepository(pg)
+	//***				 ***//
 
-	err := ar.GetAccountByEmail(ac)
+	//***  auth module ****//
+	// auth service
+	authService := auth.AuthService(accountRepository, auth.AuthHelper())
+	//***  			   ***//
 
-	if err != nil {
-		log.Fatal(err)
+	// init rest app
+	r := rest.Rest(authService)
+
+	// start listen port
+	if err := r.Run(os.Getenv("NEPTUNE_REST_ADDR")); err != nil {
+		fmt.Println(err)
 	}
-
-	fmt.Println(ac)
 
 }

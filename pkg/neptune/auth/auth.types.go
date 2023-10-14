@@ -16,3 +16,8 @@ type PasetoPayload struct {
 	NotBefore  time.Time `json:"nbf"`
 	Jti        string    `json:"jti"`
 }
+
+type SigninTokenResponse struct {
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+}

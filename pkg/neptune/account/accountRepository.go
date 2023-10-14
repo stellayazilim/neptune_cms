@@ -34,9 +34,26 @@ func (r *accountRepository) GetAccountByEmail(a *models.Account) error {
 
 		/* sql */
 		`SELECT id, email, password FROM Accounts WHERE email=$1`, &a.Email)
+
+	fmt.Println(err, a)
 	return err
 }
 
 func (r *accountRepository) CreateAccount(a *models.Account) error {
+
+	tx := r.postgres.DB.MustBegin()
+
+	if _, err := tx.Exec(
+		/* sql */
+		`INSERT INTO Accounts (email, password) VALUES ($1, $2)`,
+		a.Email, a.Password,
+	); err != nil {
+
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
+
 	return nil
 }

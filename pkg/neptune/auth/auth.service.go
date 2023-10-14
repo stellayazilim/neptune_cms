@@ -1,8 +1,13 @@
 package auth
 
 import (
+	"fmt"
+	"os"
+	"time"
+
 	"github.com/stellayazilim/neptune_cms/pkg/models"
 	"github.com/stellayazilim/neptune_cms/pkg/neptune/account"
+	"github.com/stellayazilim/neptune_cms/pkg/utils"
 )
 
 type IAuthService interface {
@@ -31,6 +36,8 @@ func AuthService(accountRepository account.IAccountRepository, helpers IAuthHelp
 }
 
 func (s *authService) Signup(dto *SignupDto) error {
+	fmt.Println(string(utils.GenNCharString(32)))
+
 	return s.repositories.account.CreateAccount(&models.Account{
 		Email:    dto.Email,
 		Password: s.helpers.HashPassword(dto),
@@ -46,8 +53,8 @@ func (s *authService) Signin(dto *SigninDto) ([2]string, error) {
 	if err := s.repositories.account.GetAccountByEmail(acc); err != nil {
 		return tokens, err
 	}
-
 	if s.helpers.ComparePassword(acc, dto) {
+		tokens[0] = s.helpers.CreateToken([]byte(os.Getenv("PASETO_ACCESS_SYMMETRIC_KEY")), acc, time.Minute*20)
 		return tokens, nil
 	}
 
