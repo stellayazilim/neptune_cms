@@ -24,7 +24,8 @@ func (t *TSAuthService) TestSignup() {
 	t.Run("should signup", func() {
 		mockAccountRepo := new(mocks.MockAccountRepository)
 		mockAuthHelper := new(mocks.MockAuthHelper)
-		authService := auth.AuthService(mockAccountRepo, mockAuthHelper)
+		mockTokenRepo := new(mocks.MockTokenRepository)
+		authService := auth.AuthService(mockAccountRepo, mockTokenRepo, mockAuthHelper)
 		adto := &auth.SignupDto{
 			Email:    "jhon@doe.com",
 			Password: "1234",
@@ -45,7 +46,8 @@ func (t *TSAuthService) TestSignup() {
 	t.Run("it should signin by email and password", func() {
 		mockAccountRepo := new(mocks.MockAccountRepository)
 		mockAuthHelper := new(mocks.MockAuthHelper)
-		authService := auth.AuthService(mockAccountRepo, mockAuthHelper)
+		mockTokenRepo := new(mocks.MockTokenRepository)
+		authService := auth.AuthService(mockAccountRepo, mockTokenRepo, mockAuthHelper)
 		var err error
 		// var token string
 

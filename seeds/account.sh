@@ -15,5 +15,5 @@ connstring=postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGR
 
 
 psql $connstring <<EOF
-    INSERT INTO Accounts (email, password) VALUES ('jhon@doe.com', '1234');
+    INSERT INTO Accounts (email, password) VALUES ('jhon@doe.com', '\$2a\$10\$xQkLtRJEYODBGkUFYeiFPOeBCKM0nkVeQ/GwDRkMeOMaFZagVdbcy');
 EOF
