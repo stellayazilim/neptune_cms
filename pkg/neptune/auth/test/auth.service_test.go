@@ -59,18 +59,25 @@ func (t *TSAuthService) TestSignup() {
 		mockAccountRepo.On("GetAccountByEmail", &models.Account{
 			Email: adto.Email,
 		}).
-			Return(nil).
 			Run(func(args mock.Arguments) {
 				arg := args.Get(0).(*models.Account)
 				arg.Password = []byte("$2a$10$89Uf6Q4Tm6KLaCG8LpuOne8kIsVpA7Zx2FvY9Ak8iR5ykxOwUpU0W")
+
 				mockAuthHelper.On("ComparePassword", arg, adto).Return(true)
-			})
+
+				t := &models.Token{
+					Token: "uOne8kIsVpA7Z",
+				}
+				mockTokenRepo.On("CreateRefreshToken", args).Return(t, nil)
+			}).
+			Return(nil)
 
 		// t.Nil(err)
 		token, err := authService.Signin(adto)
 
 		t.Nil(err)
-		t.Equal(token, [2]string{"", ""})
+		t.NotEmpty(token[0])
+		t.NotEmpty(token[1])
 
 	})
 }

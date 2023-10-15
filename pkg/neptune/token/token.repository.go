@@ -47,8 +47,9 @@ func (r *tokenRepository) CreateRefreshToken(account *models.Account) (*models.T
 		token.TokenType,
 	)
 
-	if err := res.Scan(token.ID); err == nil {
+	if err := res.Scan(token.ID); err != nil {
 		tx.Rollback()
+		return token, err
 	}
 
 	tx.Commit()
