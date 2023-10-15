@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/o1egl/paseto"
-	"github.com/stellayazilim/neptune_cms/pkg/models"
+	account_entity "github.com/stellayazilim/neptune_cms/pkg/entities/account.entity"
 )
 
 var PasswordInvalid = errors.New("password_invalid")
@@ -14,23 +14,25 @@ var TokenInvalid = errors.New("token_invalid")
 var TokenExpired = errors.New("token_expired")
 
 type PasetoPayload struct {
-	Audience   string    `json:"aud"`
-	Issuer     string    `json:"issuer"`
-	Subject    string    `json:"sub"`
-	IssuedAt   time.Time `json:"iat"`
-	Expiration time.Time `json:"exp"`
-	NotBefore  time.Time `json:"nbf"`
-	Jti        uuid.UUID `json:"jti"`
+	Audience   string                `json:"aud"`
+	Issuer     string                `json:"issuer"`
+	Subject    *account_entity.Email `json:"sub"`
+	IssuedAt   time.Time             `json:"iat"`
+	Expiration time.Time             `json:"exp"`
+	NotBefore  time.Time             `json:"nbf"`
+	Jti        uuid.UUID             `json:"jti"`
 }
 
-func CreatePasetoPayload(p *models.Account, duration time.Duration) *PasetoPayload {
+func CreatePasetoPayload(
+	email *account_entity.Email,
+	duration time.Duration) *PasetoPayload {
 
 	now := time.Now()
 
 	return &PasetoPayload{
 		Audience:   "Account",
 		Issuer:     "Stella",
-		Subject:    p.Email,
+		Subject:    email,
 		IssuedAt:   now,
 		Expiration: now.Add(duration),
 		NotBefore:  now,

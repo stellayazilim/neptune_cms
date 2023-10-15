@@ -1,43 +1,40 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"os"
 
-	"github.com/stellayazilim/neptune_cms/internal/rest"
-	"github.com/stellayazilim/neptune_cms/pkg/neptune/account"
-	"github.com/stellayazilim/neptune_cms/pkg/neptune/auth"
-	"github.com/stellayazilim/neptune_cms/pkg/neptune/token"
+	token_entity "github.com/stellayazilim/neptune_cms/pkg/entities/token.entity"
+	"github.com/stellayazilim/neptune_cms/pkg/repositories"
 	"github.com/stellayazilim/neptune_cms/pkg/storage/postgres"
 	"github.com/stellayazilim/neptune_cms/pkg/utils"
 )
 
 func main() {
 
-	//load env
 	utils.InjectEnv(utils.GetRootDir() + "/env/.env")
-
-	// connect postgres
 	pg := postgres.NewPostgres()
 
-	//*** account module ****//
-	//***				 ****//
-	// account repository
-	accountRepository := account.AccountRepository(pg)
-	//***				 ***//
-	// token repository
-	tokenRepository := token.TokenRepository(pg)
-	//***  auth module ****//
-	// auth service
-	authService := auth.AuthService(accountRepository, tokenRepository, auth.AuthHelper())
-	//***  			   ***//
+	//ar := repositories.AccountRepository(pg)
 
-	// init rest app
-	r := rest.Rest(authService)
+	tr := repositories.TokenRepository(pg)
 
-	// start listen port
-	if err := r.Run(os.Getenv("NEPTUNE_REST_ADDR")); err != nil {
-		fmt.Println(err)
-	}
+	// as := auth.New(ar, tr)
 
+	// sdt := auth.SignInDto{
+	// 	Email:    "jhon@doe.com",
+	// 	Password: "1234",
+	// }
+	//as.SignIn(context.TODO(), &sdt)
+
+	//tokens, _ := tr.Find(context.TODO())
+
+	tid := token_entity.ID(uint64(23))
+	tbid, _ := tr.FindByTokenId(context.TODO(), &tid)
+
+	fmt.Println(tbid.Value, tbid.TokenStatus)
+	tbid.TokenStatus = tbid.TokenStatus.INVALID()
+
+	tr.Update(context.TODO(), tbid)
+	fmt.Println(tbid.Value, tbid.TokenStatus)
 }
