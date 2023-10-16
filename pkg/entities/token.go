@@ -1,11 +1,14 @@
-package token_entity
+package entities
+
+import "github.com/google/uuid"
 
 type Token struct {
-	ID          ID          `db:"id" sql:"id"`
-	Value       Value       `db:"value" sql:"value"`
-	TokenType   TokenType   `db:"type" sql:"type"`
-	TokenStatus TokenStatus `db:"status" sql:"status"`
-	AccountID   AccountID   `db:"account_id" sql:"account_id"`
+	BaseEntity,
+	ID uuid.NullUUID `db:"id"`
+	Value       string      `db:"value"`
+	TokenType   TokenType   `db:"type"`
+	TokenStatus TokenStatus `db:"status"`
+	AccountID   string      `db:"account_id"`
 }
 
 // #region token type enum
@@ -21,10 +24,7 @@ const (
 // #endregion
 
 // #region token value objects
-type ID uint64
-type Value string
 type Tokens []*Token
-type AccountID string
 
 type TokenType string
 type TokenStatus string
@@ -32,9 +32,6 @@ type TokenStatus string
 // #endregion
 
 // #region token status enum
-func NewDefaultTokenStatus() TokenStatus {
-	return new(TokenStatus).VALID()
-}
 
 func NewEmptyTokenStatus() TokenStatus {
 	return *new(TokenStatus)

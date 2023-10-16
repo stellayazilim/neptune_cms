@@ -2,18 +2,20 @@ package repositories
 
 import (
 	"context"
+	"fmt"
 
-	token_entity "github.com/stellayazilim/neptune_cms/pkg/entities/token.entity"
+	"github.com/google/uuid"
+	"github.com/stellayazilim/neptune_cms/pkg/entities"
 	"github.com/stellayazilim/neptune_cms/pkg/storage/postgres"
 )
 
 type ITokenRepository interface {
-	Create(context.Context, *token_entity.Token) error
-	Find(context.Context) (*token_entity.Tokens, error)
-	FindByTokenId(context.Context, *token_entity.ID) (*token_entity.Token, error)
-	FindByAccountId(context.Context, *token_entity.AccountID) (*token_entity.Token, error)
-	Update(context.Context, *token_entity.Token) error
-	Delete(context.Context, *token_entity.ID) error
+	Create(context.Context, *entities.Token) error
+	Find(context.Context) (*entities.Tokens, error)
+	FindByTokenId(context.Context, uint64) (*entities.Token, error)
+	FindByAccountId(context.Context, uuid.UUID) (*entities.Token, error)
+	Update(context.Context, *entities.Token) error
+	Delete(context.Context, uint64) error
 }
 type tokenRepository struct {
 	postgres *postgres.Postgres
@@ -26,7 +28,7 @@ func TokenRepository(p *postgres.Postgres) ITokenRepository {
 }
 
 // #region Create token
-func (r *tokenRepository) Create(ctx context.Context, token *token_entity.Token) error {
+func (r *tokenRepository) Create(ctx context.Context, token *entities.Token) error {
 
 	tx, err := r.postgres.DB.BeginTxx(ctx, nil)
 	if err != nil {
@@ -34,13 +36,14 @@ func (r *tokenRepository) Create(ctx context.Context, token *token_entity.Token)
 		return err
 	}
 
+	fmt.Println("acc_id :", token.AccountID)
 	result, err := tx.ExecContext(ctx,
 		/* sql */ `
 			INSERT INTO Tokens (value, type, status, account_id) VALUES ($1, $2, $3, $4)
 		`, token.Value, token.TokenType, token.TokenStatus, token.AccountID)
 
 	if err != nil {
-
+		fmt.Println("error happ:", err.Error())
 		tx.Rollback()
 		return err
 	}
@@ -56,8 +59,8 @@ func (r *tokenRepository) Create(ctx context.Context, token *token_entity.Token)
 // #endregion
 
 // #region find all tokens
-func (r *tokenRepository) Find(ctx context.Context) (*token_entity.Tokens, error) {
-	t := new(token_entity.Tokens)
+func (r *tokenRepository) Find(ctx context.Context) (*entities.Tokens, error) {
+	t := new(entities.Tokens)
 
 	err := r.postgres.DB.SelectContext(ctx, t, "SELECT * FROM Tokens")
 
@@ -70,8 +73,8 @@ func (r *tokenRepository) Find(ctx context.Context) (*token_entity.Tokens, error
 // #endregion
 
 // #region Find token by tokenId
-func (r *tokenRepository) FindByTokenId(ctx context.Context, id *token_entity.ID) (*token_entity.Token, error) {
-	t := &token_entity.Token{}
+func (r *tokenRepository) FindByTokenId(ctx context.Context, id uint64) (*entities.Token, error) {
+	t := &entities.Token{}
 
 	if err := r.postgres.DB.GetContext(ctx, t,
 		/* sql */ `
@@ -86,9 +89,9 @@ func (r *tokenRepository) FindByTokenId(ctx context.Context, id *token_entity.ID
 // #endregion
 
 // #region find token by account id
-func (r *tokenRepository) FindByAccountId(ctx context.Context, id *token_entity.AccountID) (*token_entity.Token, error) {
+func (r *tokenRepository) FindByAccountId(ctx context.Context, id uuid.UUID) (*entities.Token, error) {
 
-	t := &token_entity.Token{}
+	t := &entities.Token{}
 	if err := r.postgres.DB.GetContext(ctx, t,
 		/* sql */ `
 			SELECT * FROM Tokens WHERE id=$1`, id,
@@ -100,7 +103,7 @@ func (r *tokenRepository) FindByAccountId(ctx context.Context, id *token_entity.
 	return t, nil
 }
 
-func (r *tokenRepository) Update(ctx context.Context, t *token_entity.Token) error {
+func (r *tokenRepository) Update(ctx context.Context, t *entities.Token) error {
 
 	tx, err := r.postgres.DB.BeginTxx(ctx, nil)
 
@@ -117,6 +120,6 @@ func (r *tokenRepository) Update(ctx context.Context, t *token_entity.Token) err
 	return nil
 }
 
-func (r *tokenRepository) Delete(ctx context.Context, id *token_entity.ID) error {
+func (r *tokenRepository) Delete(ctx context.Context, id uint64) error {
 	return nil
 }

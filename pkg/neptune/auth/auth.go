@@ -2,11 +2,11 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"time"
 
-	account_entity "github.com/stellayazilim/neptune_cms/pkg/entities/account.entity"
-	token_entity "github.com/stellayazilim/neptune_cms/pkg/entities/token.entity"
+	"github.com/stellayazilim/neptune_cms/pkg/entities"
 	"github.com/stellayazilim/neptune_cms/pkg/libs/paseto"
 	"github.com/stellayazilim/neptune_cms/pkg/repositories"
 	"github.com/stellayazilim/neptune_cms/pkg/utils"
@@ -37,17 +37,17 @@ func New(
 
 func (s *authService) SignIn(ctx context.Context, dto *SignInDto) (*SignInTokenSerializer, error) {
 
-	email := account_entity.Email(dto.Email)
 	tokens := new(SignInTokenSerializer)
-	account, err := s.repositories.account.FindByEmail(ctx, &email)
+	account, err := s.repositories.account.FindByEmail(ctx, dto.Email)
 
 	if err != nil {
 		return tokens, err
 	}
 
 	// create access token
-	payload := paseto.CreatePasetoPayload(&account.Email, time.Minute*15)
+	payload := paseto.CreatePasetoPayload(account.Email, time.Minute*15)
 	if accessToken, err := payload.CreatePasetoTokenByPayload([]byte(os.Getenv("PASETO_ACCESS_SYMMETRIC_KEY"))); err != nil {
+		fmt.Println("error :", err)
 		return tokens, err
 	} else {
 		tokens[0] = accessToken
@@ -56,14 +56,20 @@ func (s *authService) SignIn(ctx context.Context, dto *SignInDto) (*SignInTokenS
 
 	// create refresh token
 
-	token := &token_entity.Token{
-		Value:       token_entity.Value(utils.Cuid()),
-		TokenType:   token_entity.TokenType_REFRESH,
-		TokenStatus: new(token_entity.TokenStatus).VALID(),
-		AccountID:   token_entity.AccountID(account.ID),
+	token := &entities.Token{
+		Value:       utils.Cuid(),
+		TokenType:   entities.TokenType_REFRESH,
+		TokenStatus: entities.TokenStatus("VALID"),
+		AccountID:   account.ID,
 	}
 
-	s.repositories.token.Create(ctx, token)
+	if err := s.repositories.token.Create(ctx, token); err != nil {
+		fmt.Println("error :", err)
+		return tokens, err
+	}
+
+	tokens[1] = string(token.Value)
+
 	return tokens, nil
 }
 

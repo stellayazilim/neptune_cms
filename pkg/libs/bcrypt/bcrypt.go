@@ -1,18 +1,18 @@
 package bcrypt
 
 import (
-	account_entity "github.com/stellayazilim/neptune_cms/pkg/entities/account.entity"
+	"github.com/stellayazilim/neptune_cms/pkg/value_objects"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func ComparePassword(hash, plain account_entity.Password) bool {
+func ComparePassword(hash, plain value_objects.Password) bool {
 	if err := bcrypt.CompareHashAndPassword(hash, plain); err != nil {
 		return false
 	}
 	return true
 }
 
-func GenHash(p *account_entity.Password) error {
+func GenHash(p *value_objects.Password) error {
 	hash, err := bcrypt.GenerateFromPassword(*p, bcrypt.DefaultCost)
 
 	if err != nil {

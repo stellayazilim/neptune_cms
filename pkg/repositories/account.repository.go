@@ -2,19 +2,19 @@ package repositories
 
 import (
 	"context"
-	"fmt"
 
-	account_entity "github.com/stellayazilim/neptune_cms/pkg/entities/account.entity"
+	entitiy_errors "github.com/stellayazilim/neptune_cms/pkg/common/errors"
+	"github.com/stellayazilim/neptune_cms/pkg/entities"
 	"github.com/stellayazilim/neptune_cms/pkg/storage/postgres"
 )
 
 type IAccountRepository interface {
-	Find(context.Context) (*account_entity.Accounts, error)
-	FindById(context.Context, *account_entity.ID) (*account_entity.Account, error)
-	FindByEmail(context.Context, *account_entity.Email) (*account_entity.Account, error)
-	Create(context.Context, *account_entity.Account) error
-	Update(context.Context, *account_entity.Account) error
-	Delete(context.Context, *account_entity.Account) error
+	Find(context.Context) (*entities.Accounts, error)
+	FindById(context.Context, string) (*entities.Account, error)
+	FindByEmail(context.Context, string) (*entities.Account, error)
+	Create(context.Context, *entities.Account) error
+	Update(context.Context, *entities.Account) error
+	Delete(context.Context, *entities.Account) error
 }
 type accountRepository struct {
 	postgres *postgres.Postgres
@@ -26,47 +26,67 @@ func AccountRepository(p *postgres.Postgres) IAccountRepository {
 	}
 }
 
-func (r *accountRepository) Find(ctx context.Context) (*account_entity.Accounts, error) {
+func (r *accountRepository) Find(ctx context.Context) (*entities.Accounts, error) {
 
-	a := new(account_entity.Accounts)
+	a := new(entities.Accounts)
 
+	if err := r.postgres.DB.SelectContext(ctx, a,
+		/* sql */ `
+		SELECT id, email, password FROM Accounts
+	`,
+	); err != nil {
+		return a, err
+	}
 	return a, nil
 }
 
-func (r *accountRepository) FindById(ctx context.Context, id *account_entity.ID) (*account_entity.Account, error) {
-	a := new(account_entity.Account)
+func (r *accountRepository) FindById(ctx context.Context, id string) (*entities.Account, error) {
+	a := &entities.Account{}
 
+	if err := r.postgres.DB.GetContext(ctx, a,
+		/* sql */ `
+		SELECT id, email, password FROM Accounts WHERE id=$1
+	`, id); err != nil {
+		return a, entitiy_errors.RECORD_NOT_FOUND_ERROR
+	}
 	return a, nil
 }
 
-func (r *accountRepository) FindByEmail(ctx context.Context, email *account_entity.Email) (*account_entity.Account, error) {
-	a := &account_entity.Account{}
-
-	tx := r.postgres.DB.MustBeginTx(ctx, nil)
-
-	err := tx.GetContext(ctx, a,
+func (r *accountRepository) FindByEmail(ctx context.Context, email string) (*entities.Account, error) {
+	a := &entities.Account{}
+	if err := r.postgres.DB.GetContext(ctx, a,
 		/* SQL */ `
 		SELECT id, email, password FROM Accounts WHERE email=$1
-	`, email)
+	`, email); err != nil {
 
-	if err != nil {
-
-		fmt.Println(err)
-		tx.Rollback()
-		return a, err
+		return a, entitiy_errors.RECORD_NOT_FOUND_ERROR
 	}
 
 	return a, nil
 }
 
-func (r *accountRepository) Create(ctx context.Context, account *account_entity.Account) error {
+func (r *accountRepository) Create(ctx context.Context, account *entities.Account) error {
+
+	tx, _ := r.postgres.DB.BeginTxx(ctx, nil)
+	defer tx.Commit()
+
+	row := tx.QueryRowxContext(ctx,
+		/* sql */ `INSERT INTO Accounts (email, password) VALUES ( $1, $2 ) RETURNING id`,
+		account.Email, account.Password)
+
+	if err := row.Scan(&account.ID); err != nil {
+
+		tx.Rollback()
+		return err
+	}
+
 	return nil
 }
 
-func (r *accountRepository) Update(ctx context.Context, account *account_entity.Account) error {
+func (r *accountRepository) Update(ctx context.Context, account *entities.Account) error {
 	return nil
 }
 
-func (r *accountRepository) Delete(ctx context.Context, account *account_entity.Account) error {
+func (r *accountRepository) Delete(ctx context.Context, account *entities.Account) error {
 	return nil
 }
