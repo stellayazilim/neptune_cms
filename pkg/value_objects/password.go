@@ -6,8 +6,8 @@ func (p *Password) ToString() string {
 	return string(*p)
 }
 
-func NewPassword(b []byte) *Password {
-	p := new(Password)
-	*p = b
+func NewPassword(s string) Password {
+	p := Password(s)
+
 	return p
 }

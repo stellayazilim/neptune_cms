@@ -12,14 +12,8 @@ func ComparePassword(hash, plain value_objects.Password) bool {
 	return true
 }
 
-func GenHash(p *value_objects.Password) error {
-	hash, err := bcrypt.GenerateFromPassword(*p, bcrypt.DefaultCost)
+func GenHash(p value_objects.Password) (value_objects.Password, error) {
+	hash, err := bcrypt.GenerateFromPassword(p, bcrypt.DefaultCost)
+	return hash, err
 
-	if err != nil {
-		return err
-	}
-
-	*p = hash
-
-	return nil
 }
