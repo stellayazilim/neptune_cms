@@ -33,51 +33,51 @@ start\:dev:
 	bash -c "air -c .air.toml.dev"
 	# ==========================================================
 # create new migration file
-create:
+migration\:create:
 	bash -c "goose -dir=$(MIGRATION_DIR) create $(name) sql"
 # ==========================================================
 # Migrate the DB to the most recent version available
-up:
+migration\:up:
 	bash -c "goose -dir=$(MIGRATION_DIR) up"
 # ==========================================================
 # Migrate the DB up by 1
-up-by-one:
+migration\:up-by-one:
 	bash -c "goose -dir=$(MIGRATION_DIR) up-by-one"
 # ==========================================================
 #  Migrate the DB to a specific VERSION
-up-to:
+migration\:up-to:
 	bash -c "goose -dir=$(MIGRATION_DIR) up-to $(ver)"
 # ==========================================================
 # Roll back the version by 1
-down:
+migration\:down:
 	bash -c "goose -dir=$(MIGRATION_DIR) down"
 # ==========================================================
 # Roll back to a specific VERSION
-down-to:
+migration\:down-to:
 	bash -c "goose -dir=$(MIGRATION_DIR) down-to $(ver)"
 # ==========================================================
 #  Re-run the latest migration
-redo:
+migration\:redo:
 	bash -c "goose -dir=$(MIGRATION_DIR) redo"
 # ==========================================================
 # Roll back all migrations
-reset:
+migration\:reset:
 	bash -c "goose -dir=$(MIGRATION_DIR) reset"
 # ==========================================================
 # Dump the migration status for the current DB
-status:
+migration\:status:
 	bash -c "goose -dir=$(MIGRATION_DIR) status"
 # ==========================================================
 # Print the current version of the database
-version:
+migration\:version:
 	bash -c "goose -dir=$(MIGRATION_DIR) version"
 # ==========================================================
 # Apply sequential ordering to migrations
-fix:
+migration\:fix:
 	bash -c "goose -dir=$(MIGRATION_DIR) fix"
 # ==========================================================
 # Check migration files without running them
-validate:
+migration\:validate:
 	bash -c "goose -dir=$(MIGRATION_DIR) validate"
 # ==========================================================
 # tests migrations on database

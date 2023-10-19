@@ -16,3 +16,4 @@ CREATE TABLE IF NOT EXISTS Accounts (
 DROP TABLE IF EXISTS Accounts;
 DROP EXTENSION IF EXISTS "uuid-ossp";
 -- +goose StatementEnd
+ 
