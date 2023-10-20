@@ -21,7 +21,7 @@ type IAuthService interface {
 
 type AuthService struct {
 	Repositories struct {
-		User domain_user.IAccountRepository
+		User domain_user.IUserRepository
 	}
 }
 

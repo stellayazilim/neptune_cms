@@ -8,8 +8,8 @@ import (
 type IUserHandler interface {
 }
 
-type userHandler struct {
-	services struct {
+type UserHandler struct {
+	Services struct {
 		authService services.IAuthService
 	}
 }
@@ -21,6 +21,7 @@ func InitUserRouter(a *fiber.App) error {
 	b, err := BaseHandlerFactory(AddAuthService)
 	if err != nil {
 		// handle error
+		return err
 	}
 	h := AuthHandler(b)
 

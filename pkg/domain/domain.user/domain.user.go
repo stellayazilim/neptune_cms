@@ -14,7 +14,7 @@ var (
 	UserInvalidIDError    = errors.New("User invalid id")
 )
 
-type IAccountRepository interface {
+type IUserRepository interface {
 	Create(aggregates.User) error
 	GetAll() ([]aggregates.User, error)
 	GetById(uuid.UUID) (aggregates.User, error)

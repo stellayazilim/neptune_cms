@@ -15,7 +15,7 @@ type memoryRepository struct {
 	sync.Mutex
 }
 
-func New(accounts map[uuid.UUID]aggregates.User) domain_account.IAccountRepository {
+func New(accounts map[uuid.UUID]aggregates.User) domain_account.IUserRepository {
 
 	if accounts != nil {
 		return &memoryRepository{

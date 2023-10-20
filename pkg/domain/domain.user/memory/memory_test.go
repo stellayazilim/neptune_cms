@@ -92,7 +92,7 @@ func (t *TSMDomainMemoryRepository) TestGetAll() {
 
 		t.Run(tCase.test, func() {
 
-			in, _ := tCase.input.(domain_account.IAccountRepository)
+			in, _ := tCase.input.(domain_account.IUserRepository)
 
 			res, err := in.GetAll()
 			t.Equal(res, tCase.expectedResult.([]aggregates.User))

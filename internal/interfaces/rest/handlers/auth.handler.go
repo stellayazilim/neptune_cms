@@ -39,6 +39,8 @@ func InitAuthRouter(a *fiber.App) error {
 
 	if err != nil {
 		// todo handle err
+
+		return err
 	}
 	h := AuthHandler(b)
 

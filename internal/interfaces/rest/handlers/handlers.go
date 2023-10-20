@@ -6,12 +6,13 @@ import (
 	"github.com/stellayazilim/neptune_cms/pkg/services"
 )
 
-var AuthServiceAlreadyExist = errors.New("Auth service already exist")
+var ErrAuthServiceAlreadyExist = errors.New("auth service already exist")
 
 type BaseHandlerFactoryCfg func(*baseHandler) error
 type baseHandler struct {
-	services struct {
-		auth services.IAuthService
+	Services struct {
+		Auth services.IAuthService
+		User services.IUserService
 	}
 }
 
@@ -32,6 +33,6 @@ func AddAuthService(h *baseHandler) error {
 	if err != nil {
 		return err
 	}
-	h.services.auth = s
+	h.Services.Auth = s
 	return nil
 }
