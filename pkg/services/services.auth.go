@@ -15,7 +15,7 @@ import (
 )
 
 type IAuthService interface {
-	Login(dto domain_auth.LoginDto) ([]string, error)
+	Login(dto domain_auth.LoginDto) ([2]string, error)
 	Register(dto domain_auth.RegisterDto) error
 }
 
@@ -37,36 +37,33 @@ func AuthServiceFactory(cfgs ...ServiceConfig[AuthService]) (IAuthService, error
 	return as, nil
 }
 
-func (s *AuthService) Login(dto domain_auth.LoginDto) ([]string, error) {
+func (s *AuthService) Login(dto domain_auth.LoginDto) ([2]string, error) {
 
 	user, err := s.Repositories.User.GetByEmail(value_objects.Email(dto.Email))
-
+	tokens := new([2]string)
 	if err != nil {
-		return []string{}, err
+		return *tokens, err
 	}
 	// validate password
 	if !bcrypt.ComparePassword(user.GetAccount().Password, dto.Password) {
-		return []string{}, domain_auth.PasswordInvalidErr
+		return *tokens, domain_auth.PasswordInvalidErr
 	}
 	// Create payload
 	payload := domain_auth.CreatePasetoPayload(dto.Email, time.Minute*20)
 	// generate access token
-	accessToken, err := payload.CreatePasetoTokenByPayload([]byte(os.Getenv("PASETO_ACCESS_SYMMETRIC_KEY")))
+	tokens[0], err = payload.CreatePasetoTokenByPayload([]byte(os.Getenv("PASETO_ACCESS_SYMMETRIC_KEY")))
 
 	if err != nil {
-		return []string{}, err
+		return *tokens, err
 	}
 	// generate refresh token
-	refreshToken, err := payload.CreatePasetoTokenByPayload([]byte(os.Getenv("PASETO_REFRESH_SYMMETRIC_KEY")))
+	tokens[1], err = payload.CreatePasetoTokenByPayload([]byte(os.Getenv("PASETO_REFRESH_SYMMETRIC_KEY")))
 
 	if err != nil {
-		return []string{}, err
+		return *tokens, err
 	}
 
-	return []string{
-		accessToken,
-		refreshToken,
-	}, nil
+	return *tokens, nil
 }
 func (s *AuthService) Register(dto domain_auth.RegisterDto) error {
 
@@ -79,12 +76,16 @@ func (s *AuthService) Register(dto domain_auth.RegisterDto) error {
 	}
 
 	acc.Password = hash
-	acc.Email = value_objects.Email(hash)
+	acc.Email = value_objects.Email(dto.Email)
 
 	user := aggregates.NewUser()
 	user.SetAccount(*acc)
 
-	return s.Repositories.User.Create(user)
+	if err := s.Repositories.User.Create(user); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func AuthServiceWithMemUserRepository(s *AuthService) error {

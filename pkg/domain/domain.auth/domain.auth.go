@@ -18,7 +18,7 @@ type LoginDto struct {
 }
 type RegisterDto struct {
 	Email    string
-	Password string
+	Password []byte
 }
 
 type PasetoPayload struct {

@@ -28,15 +28,23 @@ func New(accounts map[uuid.UUID]aggregates.User) domain_account.IAccountReposito
 }
 
 func (m *memoryRepository) Create(user aggregates.User) error {
-	fmt.Println(user.GetAccount().ID.Valid)
-	if ok := user.GetAccount().ID.Valid; !ok {
-		return domain_account.UserInvalidIDError
-	}
 
+	if ok := user.GetAccount().ID.Valid; !ok {
+
+		user.GetAccount().ID.UUID = uuid.New()
+	}
+	// extra check if uuid conflict
 	if _, ok := m.accounts[user.GetAccount().ID.UUID]; ok {
+
 		return domain_account.UserAreadyExistsError
 	}
 
+	for _, account := range m.accounts {
+		if account.GetAccount().Email == user.GetAccount().Email {
+			return domain_account.UserAreadyExistsError
+		}
+	}
+	fmt.Println("not exist")
 	m.Lock()
 	m.accounts[user.GetAccount().ID.UUID] = user
 	m.Unlock()
@@ -71,15 +79,15 @@ func (m *memoryRepository) GetById(id uuid.UUID) (aggregates.User, error) {
 func (m *memoryRepository) GetByEmail(email value_objects.Email) (aggregates.User, error) {
 
 	m.Lock()
-
 	for _, account := range m.accounts {
 
 		if account.GetAccount().Email == email {
+
+			m.Unlock()
 			return account, nil
 		}
 
 	}
-
 	m.Unlock()
 	return *new(aggregates.User), domain_account.UserNotFoundError
 }
