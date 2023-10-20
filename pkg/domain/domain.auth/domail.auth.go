@@ -13,13 +13,14 @@ var TokenInvalidErr = errors.New("token invalid")
 var TokenExpiredErr = errors.New("token expired")
 
 type LoginDto struct {
-	Email    string `json:"email"`
-	Password []byte `json:"password"`
+	Email    string
+	Password []byte
 }
 type RegisterDto struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string
+	Password string
 }
+
 type PasetoPayload struct {
 	Audience   string    `json:"aud"`
 	Issuer     string    `json:"issuer"`
