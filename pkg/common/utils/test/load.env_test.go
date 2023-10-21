@@ -13,7 +13,7 @@ func TestLoadEnv(t *testing.T) {
 
 	t.Run("should load env variables from .env file", func(t *testing.T) {
 
-		err := utils.InjectEnv(utils.GetRootDir() + "/env/.env")
+		err := utils.InjectEnv(utils.GetRootDir() + "/env/.env.test")
 		asserts.NotEmpty(os.Getenv("POSTGRES_DB"))
 		asserts.Nil(err)
 	})
