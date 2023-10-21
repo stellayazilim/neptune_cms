@@ -16,10 +16,9 @@ type Account struct {
 func NewAccount() *Account {
 
 	return &Account{
-		Base:         Base{},
-		ID:           uuid.NullUUID{},
-		Email:        *new(value_objects.Email),
-		Password:     value_objects.Password{},
-		OldPasswords: []value_objects.Password{},
+		Base:     Base{},
+		ID:       uuid.NullUUID{},
+		Email:    *new(value_objects.Email),
+		Password: value_objects.Password{},
 	}
 }

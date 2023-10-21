@@ -8,18 +8,10 @@ import (
 	"github.com/o1egl/paseto"
 )
 
-var PasswordInvalidErr = errors.New("password invalid")
-var TokenInvalidErr = errors.New("token invalid")
-var TokenExpiredErr = errors.New("token expired")
+var ErrPasswordInvalid = errors.New("password invalid")
+var ErrTokenInvalid = errors.New("token invalid")
+var ErrTokenExpired = errors.New("token expired")
 
-type LoginDto struct {
-	Email    string `json:"email"`
-	Password []byte `json:"password"`
-}
-type RegisterDto struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
 type PasetoPayload struct {
 	Audience   string    `json:"aud"`
 	Issuer     string    `json:"issuer"`

@@ -3,7 +3,7 @@ package utils_test
 import (
 	"testing"
 
-	"github.com/stellayazilim/neptune_cms/pkg/utils"
+	"github.com/stellayazilim/neptune_cms/pkg/common/utils"
 	"github.com/stretchr/testify/assert"
 )
 
