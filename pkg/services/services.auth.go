@@ -51,7 +51,8 @@ func (s *AuthService) Login(request dto.LoginRequest) (dto.LoginResponse, error)
 	// Create payload
 	payload := domain_auth.CreatePasetoPayload(request.Body.Email, time.Minute*20)
 	// generate access token
-	accessToken, err := payload.CreatePasetoTokenByPayload([]byte(os.Getenv("PASETO_ACCESS_SYMMETRIC_KEY")))
+
+	accessToken, err := payload.CreatePasetoTokenByPayload([]byte(os.Getenv("PASETO_REFRESH_SYMMETRIC_KEY")))
 
 	if err != nil {
 		return response, err
@@ -85,6 +86,7 @@ func (s *AuthService) Register(dto dto.RegisterRequest) error {
 	user.SetAccount(*acc)
 
 	if err := s.Repositories.User.Create(user); err != nil {
+
 		return err
 	}
 
