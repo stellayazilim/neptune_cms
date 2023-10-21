@@ -5,11 +5,10 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	rest_converter "github.com/stellayazilim/neptune_cms/internal/interfaces/rest/converters"
-	"github.com/stellayazilim/neptune_cms/internal/interfaces/rest/dto"
-	"github.com/stellayazilim/neptune_cms/internal/interfaces/rest/serializers"
+
+	interface_rest_common "github.com/stellayazilim/neptune_cms/internal/interfaces/rest/common"
+	"github.com/stellayazilim/neptune_cms/pkg/common/dto"
 	domain_user "github.com/stellayazilim/neptune_cms/pkg/domain/domain.user"
-	"github.com/stellayazilim/neptune_cms/pkg/services"
 )
 
 type IAuthHandler interface {
@@ -18,16 +17,13 @@ type IAuthHandler interface {
 }
 
 type authHandler struct {
-	baseHandler
-	services struct {
-		authService services.IAuthService
-	}
+	interface_rest_common.BaseHandler
 }
 type AuthHandlerFactoryCf func(*authHandler) error
 
-func AuthHandler(base baseHandler) IAuthHandler {
+func AuthHandler(base interface_rest_common.BaseHandler) IAuthHandler {
 	h := new(authHandler)
-	h.baseHandler = base
+	h.BaseHandler = base
 	return h
 }
 
@@ -35,7 +31,7 @@ func InitAuthRouter(a *fiber.App) error {
 
 	r := a.Group("/auth")
 
-	b, err := BaseHandlerFactory(AddAuthService)
+	b, err := BaseHandlerFactory(AddAuthService())
 
 	if err != nil {
 		// todo handle err
@@ -51,7 +47,7 @@ func InitAuthRouter(a *fiber.App) error {
 
 func (h *authHandler) Login(ctx *fiber.Ctx) error {
 
-	body := new(dto.LoginDto)
+	body := new(dto.LoginRequest)
 
 	if err := ctx.BodyParser(body); err != nil {
 		// todo parse error for status code
@@ -59,12 +55,10 @@ func (h *authHandler) Login(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	tokens, err := h.services.authService.Login(rest_converter.LoginDtoConverter(*body))
+	tokens, err := h.Services.Auth.Login(*body)
 
 	if err != nil {
 		// todo parse error for status code
-
-		fmt.Println(errors.Is(err, domain_user.UserNotFoundError))
 		if errors.Is(err, domain_user.UserNotFoundError) {
 			return fiber.ErrUnauthorized
 		}
@@ -72,21 +66,18 @@ func (h *authHandler) Login(ctx *fiber.Ctx) error {
 		return fiber.ErrUnauthorized
 	}
 	fmt.Println("login 3")
-	return ctx.JSON(serializers.LoginResponseSerializer{
-		AccessToken:  tokens[0],
-		RefreshToken: tokens[1],
-	})
+	return ctx.JSON(tokens)
 
 }
 func (h *authHandler) Register(ctx *fiber.Ctx) error {
 
-	body := new(dto.RegisterDto)
+	body := new(dto.RegisterRequest)
 	if err := ctx.BodyParser(body); err != nil {
 		// todo parse error for status code
 		return fiber.ErrUnprocessableEntity
 	}
 
-	if err := h.services.authService.Register(rest_converter.RegisterDtoConverter(*body)); err != nil {
+	if err := h.Services.Auth.Register(*body); err != nil {
 		return fiber.ErrConflict
 	}
 

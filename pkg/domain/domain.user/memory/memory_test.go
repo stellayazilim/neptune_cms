@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type TSMDomainMemoryRepository struct {
+type TSMDomainUserMemoryRepository struct {
 	suite.Suite
 }
 
@@ -22,11 +22,11 @@ type testCase struct {
 }
 
 func TestTSDomainMemoryRepository(t *testing.T) {
-	suite.Run(t, new(TSMDomainMemoryRepository))
+	suite.Run(t, new(TSMDomainUserMemoryRepository))
 }
 
-func (t *TSMDomainMemoryRepository) TestCreate() {
-	accountMemRepository := memory.New(nil)
+func (t *TSMDomainUserMemoryRepository) TestCreate() {
+	accountMemRepository := memory.New()
 	happy := aggregates.NewUser()
 	happy.GetAccount().ID.UUID = uuid.New()
 	happy.GetAccount().ID.Valid = true
@@ -63,7 +63,7 @@ func (t *TSMDomainMemoryRepository) TestCreate() {
 	}
 }
 
-func (t *TSMDomainMemoryRepository) TestGetAll() {
+func (t *TSMDomainUserMemoryRepository) TestGetAll() {
 
 	happy := aggregates.NewUser()
 	happy.GetAccount().ID.UUID = uuid.New()
@@ -74,7 +74,7 @@ func (t *TSMDomainMemoryRepository) TestGetAll() {
 			test:           "should return empty slice if account does not exist",
 			expectedError:  nil,
 			expectedResult: make([]aggregates.User, 0),
-			input:          memory.New(make(map[uuid.UUID]aggregates.User)),
+			input:          memory.New(),
 		},
 		{
 			test:          "should return non empty slice if accounts exists",
@@ -82,9 +82,7 @@ func (t *TSMDomainMemoryRepository) TestGetAll() {
 			expectedResult: []aggregates.User{
 				happy,
 			},
-			input: memory.New(map[uuid.UUID]aggregates.User{
-				happy.GetAccount().ID.UUID: happy,
-			}),
+			input: memory.New(),
 		},
 	}
 
@@ -101,7 +99,7 @@ func (t *TSMDomainMemoryRepository) TestGetAll() {
 	}
 }
 
-func (t *TSMDomainMemoryRepository) TestGetById() {
+func (t *TSMDomainUserMemoryRepository) TestGetById() {
 
 	userId := uuid.New()
 	user := aggregates.NewUser()
@@ -109,9 +107,7 @@ func (t *TSMDomainMemoryRepository) TestGetById() {
 	users := make(map[uuid.UUID]aggregates.User, 0)
 
 	users[userId] = user
-	mrepo := memory.New(
-		users,
-	)
+	mrepo := memory.New()
 
 	testCases := []testCase{
 		{

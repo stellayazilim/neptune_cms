@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/stellayazilim/neptune_cms/internal/interfaces/rest"
-	"github.com/stellayazilim/neptune_cms/pkg/utils"
+	"github.com/stellayazilim/neptune_cms/pkg/common/utils"
 )
 
 func main() {

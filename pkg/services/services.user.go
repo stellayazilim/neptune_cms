@@ -1,8 +1,7 @@
 package services
 
 import (
-	"github.com/google/uuid"
-	"github.com/stellayazilim/neptune_cms/pkg/aggregates"
+	"github.com/stellayazilim/neptune_cms/pkg/common/dto"
 	domain_user "github.com/stellayazilim/neptune_cms/pkg/domain/domain.user"
 	domain_user_mem "github.com/stellayazilim/neptune_cms/pkg/domain/domain.user/memory"
 )
@@ -10,7 +9,7 @@ import (
 // todo user service
 
 type IUserService interface {
-	GetAll()
+	GetAll() (dto.UsersResponse, error)
 }
 
 type UserService struct {
@@ -30,12 +29,41 @@ func UserServiceFactory(cfgs ...ServiceConfig[UserService]) (IUserService, error
 	return as, nil
 }
 
-func UserServiceWithMemUserRepository(s *UserService) error {
-	users := make(map[uuid.UUID]aggregates.User)
-
-	userRepository := domain_user_mem.New(users)
-	s.Repositories.User = userRepository
-	return nil
+func UserServiceWithMemUserRepository() ServiceConfig[UserService] {
+	return func(s *UserService) error {
+		userRepository := domain_user_mem.New()
+		s.Repositories.User = userRepository
+		return nil
+	}
 }
 
-func (s *UserService) GetAll() {}
+func (s *UserService) GetAll() (dto.UsersResponse, error) {
+	users, err := s.Repositories.User.GetAll()
+
+	if err != nil {
+		return *new(dto.UsersResponse), err
+	}
+
+	data := make([]dto.UserResponseBody, 0)
+
+	for _, us := range users {
+		data = append(data, dto.UserResponseBody{
+			Email: string(us.GetAccount().Email),
+		})
+	}
+
+	response := dto.UsersResponse{
+		Body: dto.UsersResponseBody{
+			Data:         data,
+			Count:        1,
+			Displaying:   1,
+			TotalPage:    1,
+			CurrentPage:  1,
+			PreviousPage: "",
+			NextPage:     "",
+		},
+	}
+
+	return response, nil
+
+}

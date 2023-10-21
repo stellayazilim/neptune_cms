@@ -3,22 +3,15 @@ package handlers
 import (
 	"errors"
 
+	interface_rest_common "github.com/stellayazilim/neptune_cms/internal/interfaces/rest/common"
 	"github.com/stellayazilim/neptune_cms/pkg/services"
 )
 
 var ErrAuthServiceAlreadyExist = errors.New("auth service already exist")
 
-type BaseHandlerFactoryCfg func(*baseHandler) error
-type baseHandler struct {
-	Services struct {
-		Auth services.IAuthService
-		User services.IUserService
-	}
-}
+func BaseHandlerFactory(configs ...interface_rest_common.BaseHandlerFactoryCfg) (interface_rest_common.BaseHandler, error) {
 
-func BaseHandlerFactory(configs ...BaseHandlerFactoryCfg) (baseHandler, error) {
-
-	base := new(baseHandler)
+	base := new(interface_rest_common.BaseHandler)
 	for _, cfg := range configs {
 		if err := cfg(base); err != nil {
 			return *base, err
@@ -27,12 +20,33 @@ func BaseHandlerFactory(configs ...BaseHandlerFactoryCfg) (baseHandler, error) {
 
 	return *base, nil
 }
-
-func AddAuthService(h *baseHandler) error {
-	s, err := services.AuthServiceFactory(services.AuthServiceWithMemUserRepository)
-	if err != nil {
-		return err
+func AddAuthService() interface_rest_common.BaseHandlerFactoryCfg {
+	return func(h *interface_rest_common.BaseHandler) error {
+		s, err := services.AuthServiceFactory(
+			services.AuthServiceWithMemUserRepository(),
+		)
+		if err != nil {
+			return err
+		}
+		h.Services.Auth = s
+		return nil
 	}
-	h.Services.Auth = s
-	return nil
+}
+
+func AddUserService() interface_rest_common.BaseHandlerFactoryCfg {
+
+	return func(h *interface_rest_common.BaseHandler) error {
+		s, err := services.UserServiceFactory(
+			services.UserServiceWithMemUserRepository(),
+		)
+
+		if err != nil {
+			return err
+		}
+
+		h.Services.User = s
+
+		return nil
+	}
+
 }
