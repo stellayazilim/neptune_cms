@@ -4,5 +4,10 @@ import "github.com/google/uuid"
 
 type Profile struct {
 	Base
-	ID uuid.UUID
+	ID uuid.NullUUID
+}
+
+func NewProfile() *Profile {
+
+	return &Profile{}
 }
