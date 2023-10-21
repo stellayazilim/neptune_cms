@@ -1,7 +1,9 @@
 package dto
 
+import "github.com/stellayazilim/neptune_cms/pkg/value_objects"
+
 type UserResponseBody struct {
-	Email string `json:"email"`
+	Email value_objects.Email `json:"email"`
 }
 
 type UserResponse struct {

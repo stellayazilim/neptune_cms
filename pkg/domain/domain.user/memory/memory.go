@@ -1,7 +1,6 @@
 package memory
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/google/uuid"
@@ -32,15 +31,14 @@ func (m *memoryRepository) Create(user aggregates.User) error {
 	// extra check if uuid conflict
 	if _, ok := (*m.accounts)[user.GetAccount().ID.UUID]; ok {
 
-		return domain_account.UserAreadyExistsError
+		return domain_account.ErrUserAreadyExists
 	}
 
 	for _, account := range *m.accounts {
 		if account.GetAccount().Email == user.GetAccount().Email {
-			return domain_account.UserAreadyExistsError
+			return domain_account.ErrUserAreadyExists
 		}
 	}
-	fmt.Println("not exist")
 	m.Lock()
 	(*m.accounts)[user.GetAccount().ID.UUID] = user
 	m.Unlock()
@@ -62,7 +60,7 @@ func (m *memoryRepository) GetAll() ([]aggregates.User, error) {
 func (m *memoryRepository) GetById(id uuid.UUID) (aggregates.User, error) {
 
 	if _, ok := (*m.accounts)[id]; !ok {
-		return aggregates.NewUser(), domain_account.UserNotFoundError
+		return aggregates.NewUser(), domain_account.ErrUserNotFound
 	}
 
 	m.Lock()
@@ -85,13 +83,13 @@ func (m *memoryRepository) GetByEmail(email value_objects.Email) (aggregates.Use
 
 	}
 	m.Unlock()
-	return *new(aggregates.User), domain_account.UserNotFoundError
+	return *new(aggregates.User), domain_account.ErrUserNotFound
 }
 
 func (m *memoryRepository) UpdateById(id uuid.UUID, account aggregates.User) error {
 
 	if _, ok := (*m.accounts)[id]; !ok {
-		return domain_account.UserNotFoundError
+		return domain_account.ErrUserNotFound
 	}
 
 	m.Lock()
@@ -103,7 +101,7 @@ func (m *memoryRepository) UpdateById(id uuid.UUID, account aggregates.User) err
 func (m *memoryRepository) DeleteById(id uuid.UUID) error {
 
 	if _, ok := (*m.accounts)[id]; !ok {
-		return domain_account.UserNotFoundError
+		return domain_account.ErrUserNotFound
 	}
 	m.Lock()
 	delete(*m.accounts, id)

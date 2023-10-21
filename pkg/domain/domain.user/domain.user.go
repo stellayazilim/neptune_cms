@@ -9,9 +9,9 @@ import (
 )
 
 var (
-	UserNotFoundError     = errors.New("User not found")
-	UserAreadyExistsError = errors.New("User already exists")
-	UserInvalidIDError    = errors.New("User invalid id")
+	ErrUserNotFound     = errors.New("user not found")
+	ErrUserAreadyExists = errors.New("user already exists")
+	ErrUserInvalidID    = errors.New("user invalid id")
 )
 
 type IUserRepository interface {

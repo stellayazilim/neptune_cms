@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 
@@ -59,20 +58,19 @@ func (h *authHandler) Login(ctx *fiber.Ctx) error {
 
 	if err != nil {
 		// todo parse error for status code
-		if errors.Is(err, domain_user.UserNotFoundError) {
+		if errors.Is(err, domain_user.ErrUserNotFound) {
 			return fiber.ErrUnauthorized
 		}
 
 		return fiber.ErrUnauthorized
 	}
-	fmt.Println("login 3")
 	return ctx.JSON(tokens)
 
 }
 func (h *authHandler) Register(ctx *fiber.Ctx) error {
 
 	body := new(dto.RegisterRequest)
-	if err := ctx.BodyParser(body); err != nil {
+	if err := ctx.BodyParser(&body.Body); err != nil {
 		// todo parse error for status code
 		return fiber.ErrUnprocessableEntity
 	}

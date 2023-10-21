@@ -47,8 +47,9 @@ func (s *UserService) GetAll() (dto.UsersResponse, error) {
 	data := make([]dto.UserResponseBody, 0)
 
 	for _, us := range users {
+
 		data = append(data, dto.UserResponseBody{
-			Email: string(us.GetAccount().Email),
+			Email: us.GetAccount().Email,
 		})
 	}
 
