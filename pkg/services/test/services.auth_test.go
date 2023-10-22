@@ -3,8 +3,8 @@ package services_test
 import (
 	"testing"
 
-	"github.com/stellayazilim/neptune_cms/pkg/common/dto"
 	"github.com/stellayazilim/neptune_cms/pkg/common/utils"
+	domain_auth "github.com/stellayazilim/neptune_cms/pkg/domain/domain.auth"
 	domain_user "github.com/stellayazilim/neptune_cms/pkg/domain/domain.user"
 	domain_user_mem "github.com/stellayazilim/neptune_cms/pkg/domain/domain.user/memory"
 	"github.com/stellayazilim/neptune_cms/pkg/services"
@@ -35,14 +35,14 @@ func (t *TSAuthService) TestAuthServiceFactory() {
 func (t *TSAuthService) TestRegister() {
 	tcases := []struct {
 		test      string
-		input     dto.RegisterRequest
+		input     domain_auth.RegisterRequest
 		expectErr error
 	}{
 		{
 			test: "Should create new user",
-			input: func() dto.RegisterRequest {
+			input: func() domain_auth.RegisterRequest {
 
-				d := dto.RegisterRequest{}
+				d := domain_auth.RegisterRequest{}
 				d.Body.Email = "jhon@doe.com"
 				d.Body.Password = "1234"
 				return d
@@ -51,9 +51,9 @@ func (t *TSAuthService) TestRegister() {
 		},
 		{
 			test: "Should return user already exist err",
-			input: func() dto.RegisterRequest {
+			input: func() domain_auth.RegisterRequest {
 
-				d := dto.RegisterRequest{}
+				d := domain_auth.RegisterRequest{}
 				d.Body.Email = "jhon@doe.com"
 				d.Body.Password = "1234"
 				return d
@@ -78,25 +78,25 @@ func (t *TSAuthService) TestLogin() {
 
 	tcases := []struct {
 		test        string
-		input       dto.LoginRequest
+		input       domain_auth.LoginRequest
 		expectErr   error
-		expectedRes dto.LoginResponse
+		expectedRes domain_auth.LoginResponse
 	}{
 		{
 			test: "should get tokens",
-			input: func() dto.LoginRequest {
-				d := dto.LoginRequest{}
+			input: func() domain_auth.LoginRequest {
+				d := domain_auth.LoginRequest{}
 				d.Body.Email = "jhon@doe.com"
 				d.Body.Password = "1234"
 				return d
 			}(),
 			expectErr:   nil,
-			expectedRes: dto.LoginResponse{},
+			expectedRes: domain_auth.LoginResponse{},
 		},
 		{
 			test: "should get user not found error",
-			input: func() dto.LoginRequest {
-				d := dto.LoginRequest{}
+			input: func() domain_auth.LoginRequest {
+				d := domain_auth.LoginRequest{}
 				d.Body.Email = "jhon1@doe.com"
 				d.Body.Password = "1234"
 				return d
@@ -107,7 +107,7 @@ func (t *TSAuthService) TestLogin() {
 
 	as, _ := services.AuthServiceFactory(services.AuthServiceWithMemUserRepository())
 
-	d := dto.RegisterRequest{}
+	d := domain_auth.RegisterRequest{}
 	d.Body.Email = "jhon@doe.com"
 	d.Body.Password = "1234"
 

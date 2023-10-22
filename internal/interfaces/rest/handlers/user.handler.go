@@ -1,8 +1,11 @@
 package handlers
 
 import (
+	"os"
+
 	"github.com/gofiber/fiber/v2"
 	interface_rest_common "github.com/stellayazilim/neptune_cms/internal/interfaces/rest/common"
+	"github.com/stellayazilim/neptune_cms/internal/interfaces/rest/common/middleware"
 )
 
 type IUserHandler interface {
@@ -32,7 +35,13 @@ func InitUserRouter(a *fiber.App) error {
 	}
 	h := UserHandler(b)
 
-	r.Get("/", h.GetAll)
+	r.Get(
+		"/",
+		middleware.PasetoMiddlewareFactory(
+			os.Getenv("PASETO_TOKEN_PREFIX"),
+			os.Getenv("PASETO_ACCESS_SYMMETRIC_KEY")),
+		h.GetAll)
+
 	return nil
 }
 

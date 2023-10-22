@@ -53,7 +53,10 @@ func (m *memoryRepository) Create(user aggregates.User) error {
 	return nil
 }
 
-func (m *memoryRepository) GetAll() ([]aggregates.User, error) {
+func (m *memoryRepository) GetAll() (struct {
+	Data  []aggregates.User
+	Total uint64
+}, error) {
 
 	users := make([]aggregates.User, 0)
 	m.Lock()
@@ -61,7 +64,13 @@ func (m *memoryRepository) GetAll() ([]aggregates.User, error) {
 		users = append(users, *account)
 	}
 	m.Unlock()
-	return users, nil
+	return struct {
+		Data  []aggregates.User
+		Total uint64
+	}{
+		Data:  users,
+		Total: uint64(len(*m.users)),
+	}, nil
 }
 
 func (m *memoryRepository) GetById(id uuid.UUID) (aggregates.User, error) {

@@ -40,6 +40,26 @@ func CreatePasetoPayload(
 }
 
 func (p *PasetoPayload) CreatePasetoTokenByPayload(key []byte) (string, error) {
-
 	return paseto.NewV2().Encrypt(key, p, nil)
+}
+
+type LoginRequest struct {
+	Body struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+}
+
+type LoginResponse struct {
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+}
+
+type RegisterRequestBody struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type RegisterRequest struct {
+	Body RegisterRequestBody
 }
