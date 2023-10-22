@@ -1,7 +1,6 @@
 package memory
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/google/uuid"
@@ -12,14 +11,13 @@ import (
 )
 
 type memoryRepository struct {
-	accounts *map[uuid.UUID]aggregates.User
+	users *map[uuid.UUID]*aggregates.User
 	sync.Mutex
 }
 
 func New() domain_account.IUserRepository {
-
 	return &memoryRepository{
-		accounts: &memory.Users,
+		users: memory.Users,
 	}
 }
 
@@ -30,57 +28,73 @@ func (m *memoryRepository) Create(user aggregates.User) error {
 		user.GetAccount().ID.UUID = uuid.New()
 	}
 	// extra check if uuid conflict
-	if _, ok := (*m.accounts)[user.GetAccount().ID.UUID]; ok {
+	if _, ok := (*m.users)[user.GetAccount().ID.UUID]; ok {
 
 		return domain_account.UserAreadyExistsError
 	}
 
-	for _, account := range *m.accounts {
-		if account.GetAccount().Email == user.GetAccount().Email {
-			return domain_account.UserAreadyExistsError
+	// check whether user is exist or not
+	// if exist return error
+	if err := func() error {
+		for _, u := range *m.users {
+			if u.GetAccount().Email == user.GetAccount().Email {
+				return domain_account.UserAreadyExistsError
+			}
 		}
+		return nil
+	}(); err != nil {
+		return err
 	}
-	fmt.Println("not exist")
+
 	m.Lock()
-	(*m.accounts)[user.GetAccount().ID.UUID] = user
+	(*m.users)[user.GetAccount().ID.UUID] = &user
 	m.Unlock()
 
 	return nil
 }
 
-func (m *memoryRepository) GetAll() ([]aggregates.User, error) {
+func (m *memoryRepository) GetAll() (struct {
+	Data  []aggregates.User
+	Total uint64
+}, error) {
 
-	accounts := make([]aggregates.User, 0)
+	users := make([]aggregates.User, 0)
 	m.Lock()
-	for _, account := range *m.accounts {
-		accounts = append(accounts, account)
+	for _, account := range *m.users {
+		users = append(users, *account)
 	}
 	m.Unlock()
-	return accounts, nil
+	return struct {
+		Data  []aggregates.User
+		Total uint64
+	}{
+		Data:  users,
+		Total: uint64(len(*m.users)),
+	}, nil
 }
 
 func (m *memoryRepository) GetById(id uuid.UUID) (aggregates.User, error) {
 
-	if _, ok := (*m.accounts)[id]; !ok {
+	if _, ok := (*m.users)[id]; !ok {
 		return aggregates.NewUser(), domain_account.UserNotFoundError
 	}
 
 	m.Lock()
 
-	account := (*m.accounts)[id]
+	account := (*m.users)[id]
 	m.Unlock()
-	return account, nil
+	return *account, nil
 }
 
 func (m *memoryRepository) GetByEmail(email value_objects.Email) (aggregates.User, error) {
 
 	m.Lock()
-	for _, account := range *m.accounts {
+	for _, account := range *m.users {
 
 		if account.GetAccount().Email == email {
 
 			m.Unlock()
-			return account, nil
+			return *account, nil
 		}
 
 	}
@@ -90,23 +104,23 @@ func (m *memoryRepository) GetByEmail(email value_objects.Email) (aggregates.Use
 
 func (m *memoryRepository) UpdateById(id uuid.UUID, account aggregates.User) error {
 
-	if _, ok := (*m.accounts)[id]; !ok {
+	if _, ok := (*m.users)[id]; !ok {
 		return domain_account.UserNotFoundError
 	}
 
 	m.Lock()
-	(*m.accounts)[id] = account
+	(*m.users)[id] = &account
 	m.Unlock()
 	return nil
 }
 
 func (m *memoryRepository) DeleteById(id uuid.UUID) error {
 
-	if _, ok := (*m.accounts)[id]; !ok {
+	if _, ok := (*m.users)[id]; !ok {
 		return domain_account.UserNotFoundError
 	}
 	m.Lock()
-	delete(*m.accounts, id)
+	delete(*m.users, id)
 	m.Unlock()
 	return nil
 }

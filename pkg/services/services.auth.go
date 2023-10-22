@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/stellayazilim/neptune_cms/pkg/aggregates"
-	"github.com/stellayazilim/neptune_cms/pkg/common/dto"
 	domain_auth "github.com/stellayazilim/neptune_cms/pkg/domain/domain.auth"
 	domain_user "github.com/stellayazilim/neptune_cms/pkg/domain/domain.user"
 	domain_user_mem "github.com/stellayazilim/neptune_cms/pkg/domain/domain.user/memory"
@@ -15,8 +14,9 @@ import (
 )
 
 type IAuthService interface {
-	Login(dto dto.LoginRequest) (dto.LoginResponse, error)
-	Register(dto dto.RegisterRequest) error
+	Login(dto domain_auth.LoginRequest) (domain_auth.LoginResponse, error)
+	Register(dto domain_auth.RegisterRequest) error
+	Refresh(dto domain_auth.LoginRequest) (domain_auth.LoginResponse, error)
 }
 
 type AuthService struct {
@@ -37,10 +37,10 @@ func AuthServiceFactory(cfgs ...ServiceConfig[AuthService]) (IAuthService, error
 	return as, nil
 }
 
-func (s *AuthService) Login(request dto.LoginRequest) (dto.LoginResponse, error) {
+func (s *AuthService) Login(request domain_auth.LoginRequest) (domain_auth.LoginResponse, error) {
 
 	user, err := s.Repositories.User.GetByEmail(value_objects.Email(request.Body.Email))
-	response := *new(dto.LoginResponse)
+	response := *new(domain_auth.LoginResponse)
 	if err != nil {
 		return response, err
 	}
@@ -51,6 +51,7 @@ func (s *AuthService) Login(request dto.LoginRequest) (dto.LoginResponse, error)
 	// Create payload
 	payload := domain_auth.CreatePasetoPayload(request.Body.Email, time.Minute*20)
 	// generate access token
+
 	accessToken, err := payload.CreatePasetoTokenByPayload([]byte(os.Getenv("PASETO_ACCESS_SYMMETRIC_KEY")))
 
 	if err != nil {
@@ -68,7 +69,7 @@ func (s *AuthService) Login(request dto.LoginRequest) (dto.LoginResponse, error)
 	response.RefreshToken = refreshToken
 	return response, nil
 }
-func (s *AuthService) Register(dto dto.RegisterRequest) error {
+func (s *AuthService) Register(dto domain_auth.RegisterRequest) error {
 
 	acc := entities.NewAccount()
 
@@ -85,10 +86,38 @@ func (s *AuthService) Register(dto dto.RegisterRequest) error {
 	user.SetAccount(*acc)
 
 	if err := s.Repositories.User.Create(user); err != nil {
+
 		return err
 	}
 
 	return nil
+}
+
+func (s *AuthService) Refresh(request domain_auth.LoginRequest) (domain_auth.LoginResponse, error) {
+
+	response := *new(domain_auth.LoginResponse)
+
+	// Create payload
+	payload := domain_auth.CreatePasetoPayload(request.Body.Email, time.Minute*20)
+	// generate access token
+
+	accessToken, err := payload.CreatePasetoTokenByPayload([]byte(os.Getenv("PASETO_ACCESS_SYMMETRIC_KEY")))
+
+	if err != nil {
+		return response, err
+	}
+
+	response.AccessToken = accessToken
+	// generate refresh token
+	refreshToken, err := payload.CreatePasetoTokenByPayload([]byte(os.Getenv("PASETO_REFRESH_SYMMETRIC_KEY")))
+
+	if err != nil {
+		return response, err
+	}
+
+	response.RefreshToken = refreshToken
+	return response, nil
+
 }
 
 func AuthServiceWithMemUserRepository() ServiceConfig[AuthService] {
