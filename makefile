@@ -22,15 +22,15 @@ export GOOSE_DRIVER=postgres
 # commands
 # spin up database and other services on docker compose
 spinup:
-	bash -c "sudo docker compose --project-directory=infrastructure up -d"
+	bash -c "docker compose --project-directory=deployment up -d"
 # ==========================================================
 # spin down
 spindown:
-	bash -c "sudo docker compose --project-directory=infrastructure down"
+	bash -c "docker compose --project-directory=deployment down"
 # ==========================================================
 # start app on dev mode with hot reload
 start\:dev:
-	bash -c "air -c .air.toml.dev"
+	bash -c "air "
 	# ==========================================================
 # create new migration file
 migration\:create:

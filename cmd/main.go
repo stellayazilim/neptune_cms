@@ -1,24 +1,22 @@
 package main
 
 import (
-	"log"
-	"os"
-
-	"github.com/stellayazilim/neptune_cms/internal/interfaces/rest"
-	"github.com/stellayazilim/neptune_cms/pkg/common/utils"
-	"github.com/stellayazilim/neptune_cms/pkg/storage/memory"
+	. "github.com/stellayazilim/neptune_cms/internal/App/Rest"
+	env "github.com/stellayazilim/neptune_cms/internal/Infrastructure/Common/Env"
+	"go.uber.org/dig"
 )
 
 func main() {
 	// init .env files
-	utils.InjectEnv(utils.GetRootDir() + "/env/.env")
+	env := env.EnvProvider()
+	env.Provide("./env/.env")
 
-	// init memory storages
-	memory.InitMemoryUser()
+	// create ioc container
+	container := dig.New()
 
-	// init rest interface
-	if err := rest.NewRestWithHandlers().Run(os.Getenv("NEPTUNE_REST_ADDR")); err != nil {
-		log.Fatal(err)
-	}
+	// Use rest api
+	UseRest(container)
 
+	// Start rest api
+	container.Invoke(Bootstrap(":8080"))
 }
