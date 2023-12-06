@@ -1,8 +1,6 @@
 package Rest
 
 import (
-	"fmt"
-
 	"github.com/gofiber/fiber/v2"
 	. "github.com/stellayazilim/neptune_cms/internal/App/Rest/Handlers"
 	"go.uber.org/dig"
@@ -14,10 +12,11 @@ func UseRest(c *dig.Container) {
 
 	// provide handlers
 	c.Provide(AuthHandler)
+	c.Provide(UserHandler)
 
-	fmt.Println("init routera")
 	// init routers
 	c.Invoke(AuthRouter)
+	c.Invoke(UserRouter)
 }
 
 func Bootstrap(addr string) func(app *fiber.App) {

@@ -13,14 +13,22 @@ require (
 	github.com/aead/chacha20poly1305 v0.0.0-20201124145622-1a5aba2a8b29 // indirect
 	github.com/aead/poly1305 v0.0.0-20180717145839-3fee0db0b635 // indirect
 	github.com/ahmetb/go-linq/v3 v3.2.0 // indirect
+	github.com/goccy/go-reflect v1.2.0 // indirect
 	github.com/gofiber/contrib/paseto v1.0.10 // indirect
+	github.com/jackc/pgpassfile v1.0.0 // indirect
+	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
+	github.com/jackc/pgx/v5 v5.4.3 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/lucsky/cuid v1.2.1 // indirect
+	github.com/mehdihadeli/go-mediatr v1.3.0 // indirect
 	github.com/mitz-it/golang-cqrs v1.5.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	go.uber.org/dig v1.17.1 // indirect
 	golang.org/x/crypto v0.14.0 // indirect
 	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0 // indirect
+	gorm.io/gorm v1.25.5 // indirect
 )
 
 require (
@@ -59,4 +67,5 @@ require (
 	golang.org/x/text v0.13.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gorm.io/driver/postgres v1.5.4
 )

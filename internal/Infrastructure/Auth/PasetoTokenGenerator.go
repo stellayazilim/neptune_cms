@@ -9,7 +9,7 @@ type pasetoTokenProvider struct {
 }
 
 func (p *pasetoTokenProvider) Generate(paylod TokenPayload) string {
-
+	
 	return ""
 }
 

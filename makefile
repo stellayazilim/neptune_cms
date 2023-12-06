@@ -30,7 +30,7 @@ spindown:
 # ==========================================================
 # start app on dev mode with hot reload
 start\:dev:
-	bash -c "air "
+	bash -c "export GO_ENV=development && wgo run  ./cmd/... ./internal/..."
 	# ==========================================================
 # create new migration file
 migration\:create:
