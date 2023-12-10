@@ -1,8 +1,8 @@
-package env
+package Providers
 
 import (
 	"github.com/joho/godotenv"
-	. "github.com/stellayazilim/neptune_cms/internal/Application/Common/Interfaces"
+	"github.com/stellayazilim/neptune.application/Common/Interfaces"
 )
 
 type envProvider struct {
@@ -17,6 +17,6 @@ func (*envProvider) Provide(path string) {
 	}
 }
 
-func EnvProvider() IEnvProvider {
+func EnvProvider() Interfaces.IEnvProvider {
 	return &envProvider{}
 }

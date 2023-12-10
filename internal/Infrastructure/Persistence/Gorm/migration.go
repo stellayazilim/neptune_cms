@@ -1,8 +1,8 @@
 package Gorm
 
 import (
-	"github.com/stellayazilim/neptune_cms/internal/Infrastructure/Common/Providers"
-	"github.com/stellayazilim/neptune_cms/internal/Infrastructure/Persistence/Gorm/Models"
+	"github.com/stellayazilim/neptune.infrastructure/Common/Providers"
+	"github.com/stellayazilim/neptune.infrastructure/Persistence/Gorm/Models"
 	"gorm.io/gorm"
 )
 
