@@ -1,4 +1,4 @@
-package AuthContract
+package LoginContract
 
 type LoginResponseBody struct {
 	ID           string `json:"_id"`
