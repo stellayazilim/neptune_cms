@@ -6,7 +6,7 @@ type ValueObject[T any] struct {
 	value T
 }
 
-func (v *ValueObject[T]) GetID() T {
+func (v *ValueObject[T]) GetValue() T {
 	return v.value
 }
 

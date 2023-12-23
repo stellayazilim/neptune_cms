@@ -1,13 +1,24 @@
-package Entities
+package UserEntities
 
 import (
-	. "github.com/stellayazilim/neptune_cms/internal/Domain/Common/Models"
-	. "github.com/stellayazilim/neptune_cms/internal/Domain/User/ValueObjects"
+	"github.com/stellayazilim/neptune.domain/Common/Models"
+	"github.com/stellayazilim/neptune.domain/User/ValueObjects"
 )
 
 type RoleEntity struct {
-	Entity[RoleID]
+	Models.Entity[ValueObjects.RoleID]
 
 	Name  string
-	Perms Perms
+	Perms ValueObjects.Perms
+}
+
+func NewRole(name string, perms ValueObjects.Perms) RoleEntity {
+	return RoleEntity{
+		Entity: Models.Entity[ValueObjects.RoleID]{
+			ID: ValueObjects.NewRoleID(),
+		},
+		Name:  name,
+		Perms: perms,
+	}
+
 }

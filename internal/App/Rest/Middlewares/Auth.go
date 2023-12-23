@@ -1,23 +1,22 @@
-package Auth
+package Middlewares
 
 import (
 	"encoding/json"
-	"fmt"
 
 	pasetoware "github.com/gofiber/contrib/paseto"
 	"github.com/gofiber/fiber/v2"
 	"github.com/o1egl/paseto"
-	. "github.com/stellayazilim/neptune_cms/internal/Domain/Auth"
-	. "github.com/stellayazilim/neptune_cms/internal/Infrastructure/Common/Providers"
+	"github.com/stellayazilim/neptune.domain/Auth"
+	"github.com/stellayazilim/neptune.infrastructure/Common/Providers"
 )
 
-func PasetoMiddlewareFactory(configService ConfigService) fiber.Handler {
+func PasetoMiddlewareFactory(configService Providers.ConfigService) fiber.Handler {
 	return pasetoware.New(pasetoware.Config{
 		SymmetricKey: []byte(configService.AccessTokenSymmetricKey),
 		TokenPrefix:  configService.TokenPrefix,
-
+		ContextKey:   configService.TokenContextKey,
 		Validate: func(decrypted []byte) (interface{}, error) {
-			payload := new(TokenPayload)
+			payload := new(Auth.AccessTokenPayload)
 			if err := json.Unmarshal(decrypted, payload); err != nil {
 				return payload, err
 			}
@@ -37,7 +36,6 @@ func PasetoMiddlewareFactory(configService ConfigService) fiber.Handler {
 			}
 		},
 		SuccessHandler: func(c *fiber.Ctx) error {
-			fmt.Println(c.Locals(c.Locals("user")))
 			return c.Next()
 		},
 	})

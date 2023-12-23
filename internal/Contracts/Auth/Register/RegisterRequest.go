@@ -10,7 +10,7 @@ type RegisterRequestBody struct {
 	FirstName string `json:"firstName" validate:"required"`
 	LastName  string `json:"lastName" validate:"required"`
 	Email     string `json:"email" validate:"required,email"`
-	Password  []byte `json:"password" validate:"required"`
+	Password  string `json:"password" validate:"required"`
 }
 
 func (r *RegisterRequestBody) Validate(ctx *fiber.Ctx) *Validator.IValidationErrorResponse {

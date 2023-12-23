@@ -6,7 +6,7 @@ type LoginRequestHeader struct {
 
 type LoginRequestBody struct {
 	Email     string `json:"email"`
-	Password  []byte `json:"password"`
+	Password  string `json:"password"`
 	FirstName string `json:"firstName" validate:"required"`
 	LastName  string `json:"lastName" validate:"required"`
 }

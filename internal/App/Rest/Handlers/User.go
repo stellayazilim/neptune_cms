@@ -1,26 +1,24 @@
 package Handlers
 
 import (
-	"fmt"
-
 	"github.com/gofiber/fiber/v2"
-	"github.com/stellayazilim/neptune_cms/internal/Infrastructure/Common/Providers"
+	"github.com/stellayazilim/neptune.app/Rest/Middlewares"
+	"github.com/stellayazilim/neptune.infrastructure/Common/Providers"
 )
 
 type userHandler struct {
-	configService *Providers.ConfigService
+	ConfigService *Providers.ConfigService
 }
 
 func UserRouter(app *fiber.App, handler *userHandler) {
-	fmt.Println("User router")
 	r := app.Group("/users")
-	r.Get("/", handler.GetAll)
+	r.Get("/", Middlewares.PasetoMiddlewareFactory(*handler.ConfigService), handler.GetAll)
 }
 
 func UserHandler(configService *Providers.ConfigService) *userHandler {
 
 	return &userHandler{
-		configService: configService,
+		ConfigService: configService,
 	}
 }
 

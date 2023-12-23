@@ -1,23 +1,60 @@
 package User
 
 import (
-	. "github.com/stellayazilim/neptune_cms/internal/Domain/Common/Models"
-	. "github.com/stellayazilim/neptune_cms/internal/Domain/User/Entities"
+	"errors"
+
+	"github.com/stellayazilim/neptune.domain/Common/Models"
+	UserEntities "github.com/stellayazilim/neptune.domain/User/Entities"
 )
 
-type UserAggregate struct {
-	AggregateRoot[UserEntity]
-	Roles *[]RoleEntity
-}
+var ErrUserNotFoundException = errors.New("user not found")
+var ErrUserAlreadyExistException = errors.New("user already exists")
 
-func CreateUserAggregate() UserAggregate {
-	return UserAggregate{}
+type (
+	UserAggregate struct {
+		Models.AggregateRoot[UserEntities.UserEntity]
+		Roles []*UserEntities.RoleEntity
+	}
+
+	UserCreatedEvent struct {
+		User UserAggregate
+	}
+
+	UserPasswordUpdateEvent struct {
+		User UserAggregate
+	}
+
+	UserValidationEvent struct {
+		User UserAggregate
+	}
+
+	UserEmailUpdateEvent struct {
+		User UserAggregate
+	}
+)
+
+func CreateUserAggregate(
+	FirstName string,
+	LastName string,
+	Email string,
+	Password []byte,
+	Roles []*UserEntities.RoleEntity,
+) UserAggregate {
+	userAggregate := new(UserAggregate)
+	userAggregate.AggregateRoot.Root = UserEntities.NewUser(
+		FirstName,
+		LastName,
+		Password,
+		Email,
+	)
+	userAggregate.Roles = Roles
+	return *userAggregate
 }
 
 func EmptyUserAggregate() UserAggregate {
 	return UserAggregate{
-		AggregateRoot: AggregateRoot[UserEntity]{
-			Root: *new(UserEntity),
+		AggregateRoot: Models.AggregateRoot[UserEntities.UserEntity]{
+			Root: *new(UserEntities.UserEntity),
 		},
 	}
 }

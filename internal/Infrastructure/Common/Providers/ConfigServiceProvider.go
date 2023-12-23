@@ -12,6 +12,7 @@ type ConfigService struct {
 	TokenPrefix              string
 	TokenIssuer              string
 	TokenAudience            string
+	TokenContextKey          string
 	TokenAccessExpiration    time.Duration
 	TokenRefreshExpiration   time.Duration
 	PostgresDatabase         string
@@ -20,6 +21,10 @@ type ConfigService struct {
 	PostgresUser             string
 	PostgresPassword         string
 	IsDevolopment            bool
+	CmsAdminEmail            string
+	CmsAdminPassword         string
+	CmsAdminFirstName        string
+	CmsAdminLastName         string
 }
 
 func ConfigServiceProvider() *ConfigService {
@@ -34,11 +39,16 @@ func ConfigServiceProvider() *ConfigService {
 		TokenIssuer:              os.Getenv("TOKEN_ISSUER"),
 		TokenAudience:            os.Getenv("TOKEN_AUDIENCE"),
 		TokenPrefix:              os.Getenv("TOKEN_PREFIX"),
+		TokenContextKey:          os.Getenv("TOKEN_CONTEXT_KEY"),
 		PostgresDatabase:         os.Getenv("POSTGRES_DB"),
 		PostgresHost:             os.Getenv("POSTGRES_HOST"),
 		PostgresPort:             os.Getenv("POSTGRES_PORT"),
 		PostgresUser:             os.Getenv("POSTGRES_USER"),
 		PostgresPassword:         os.Getenv("POSTGRES_PASSWORD"),
 		IsDevolopment:            os.Getenv("GO_ENV") == "development",
+		CmsAdminEmail:            os.Getenv("CMS_ADMIN_EMAIL"),
+		CmsAdminFirstName:        os.Getenv("CMS_ADMIN_FIRSTNAME"),
+		CmsAdminLastName:         os.Getenv("CMS_ADMIN_LASTNAME"),
+		CmsAdminPassword:         os.Getenv("CMS_ADMIN_PASSWORD"),
 	}
 }

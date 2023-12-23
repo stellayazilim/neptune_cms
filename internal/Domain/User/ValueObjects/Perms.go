@@ -1,15 +1,15 @@
 package ValueObjects
 
 import (
-	. "github.com/stellayazilim/neptune_cms/internal/Domain/Common/Models"
+	"github.com/stellayazilim/neptune.domain/Common/Models"
 )
 
 type Perms struct {
-	ValueObject[[]byte]
+	Models.ValueObject[[]byte]
 }
 
 func NewPerms(perms []byte) Perms {
 	return Perms{
-		ValueObject: NewValueObject[[]byte](perms),
+		ValueObject: Models.NewValueObject[[]byte](perms),
 	}
 }

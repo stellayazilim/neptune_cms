@@ -1,15 +1,17 @@
 package main
 
 import (
-	"github.com/stellayazilim/neptune_cms/internal/App/Rest"
-	"github.com/stellayazilim/neptune_cms/internal/Infrastructure"
-	env "github.com/stellayazilim/neptune_cms/internal/Infrastructure/Common/Env"
+	"github.com/stellayazilim/neptune.app/Rest"
+	Application "github.com/stellayazilim/neptune.application"
+	"github.com/stellayazilim/neptune.application/Setup"
+	Infrastructure "github.com/stellayazilim/neptune.infrastructure"
+	"github.com/stellayazilim/neptune.infrastructure/Common/Providers"
 	"go.uber.org/dig"
 )
 
 func main() {
 	// init .env files
-	env := env.EnvProvider()
+	env := Providers.EnvProvider()
 	env.Provide("./env/.env")
 
 	// create ioc container
@@ -17,8 +19,11 @@ func main() {
 
 	// Use rest api
 	Infrastructure.UseInfrastructure(container)
+	Application.UseApplication(container)
+
 	Rest.UseRest(container)
 
+	container.Invoke(Setup.Setup)
 	// Start rest api
 	container.Invoke(Rest.Bootstrap(":8080"))
 }

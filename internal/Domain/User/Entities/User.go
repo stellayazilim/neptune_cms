@@ -1,17 +1,17 @@
-package Entities
+package UserEntities
 
 import (
-	. "github.com/stellayazilim/neptune_cms/internal/Domain/Common/Models"
-	. "github.com/stellayazilim/neptune_cms/internal/Domain/User/ValueObjects"
+	"github.com/stellayazilim/neptune.domain/Common/Models"
+	"github.com/stellayazilim/neptune.domain/User/ValueObjects"
 )
 
 type UserEntity struct {
-	Entity[UserID]
+	Models.Entity[ValueObjects.UserID]
 
-	firstName string
-	lastName  string
-	password  []byte
-	email     string
+	FirstName string
+	LastName  string
+	Password  []byte
+	Email     string
 }
 
 func NewUser(
@@ -21,12 +21,16 @@ func NewUser(
 	email string,
 ) UserEntity {
 	return UserEntity{
-		Entity: Entity[UserID]{
-			ID: NewUserID(),
+		Entity: Models.Entity[ValueObjects.UserID]{
+			ID: ValueObjects.NewUserID(),
 		},
-		firstName: firstName,
-		lastName:  lastName,
-		password:  password,
-		email:     email,
+		FirstName: firstName,
+		LastName:  lastName,
+		Password:  password,
+		Email:     email,
 	}
+}
+
+func (a *UserEntity) SetPassword(password []byte) {
+	a.Password = password
 }
